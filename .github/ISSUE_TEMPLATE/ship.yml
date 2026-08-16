@@ -1,0 +1,36 @@
+name: I shipped
+description: Log a sprint you actually deployed. localhost does not count.
+title: "Ship: "
+labels: ["ship"]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Live URL
+      placeholder: https://
+    validations:
+      required: true
+  - type: input
+    id: oneliner
+    attributes:
+      label: One-liner
+      description: The locked sentence, not a pitch deck.
+    validations:
+      required: true
+  - type: input
+    id: hours
+    attributes:
+      label: Hours on the clock
+  - type: textarea
+    id: log
+    attributes:
+      label: Ship log
+      description: Paste the block habitat-bunny wrote for you.
+      render: markdown
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirm
+      options:
+        - label: A stranger can open this URL without my laptop.
+          required: true

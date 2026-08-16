@@ -1,49 +1,71 @@
 # habitat-bunny
 
-The Habitat bunny is a local MCP server that runs a timeboxed ship sprint inside the AI tool you already build with: Cursor, Claude Code, or Claude Desktop.
+[![npm](https://img.shields.io/npm/v/habitat-bunny)](https://www.npmjs.com/package/habitat-bunny)
+[![license](https://img.shields.io/github/license/ycanerden/habitat-bunny)](./LICENSE)
+[![habitat.md](https://img.shields.io/badge/habitat.md-always%20one%20hop%20ahead-5CAE30)](https://habitat.md)
 
-Your agent builds. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and makes you actually ship.
+The Habitat night, inside the editor you already build with.
 
-Built by [Habitat](https://joinhabitat.eu), the community behind 200+ MVPs shipped in one night across 8 cities. This is that evening, as a tool.
+Your agent writes the code. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and will not call it shipped until a stranger can click a URL.
 
-## Why
+No backend. No account. No API keys. Nothing leaves your machine.
 
-AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever: one more feature, one more refactor, never a URL anyone can click.
-
-At Habitat nights we watched hundreds of people ship real MVPs in a single evening. The magic was never the advice. It was the container: a clock, a locked scope, and a moment where you have to show what you made. The bunny puts that container in your editor.
-
-## Install
-
-Requires Node 20+. No backend, no account, no API keys. Nothing leaves your machine.
-
-### Cursor
-
-One click:
-
-[Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=habitat-bunny&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImhhYml0YXQtYnVubnkiXX0=)
-
-Or add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
-
-```json
-{
-  "mcpServers": {
-    "habitat-bunny": {
-      "command": "npx",
-      "args": ["-y", "habitat-bunny"]
-    }
-  }
-}
-```
-
-### Claude Code
+**Install in Cursor (one click):**
+[Add habitat-bunny](cursor://anysphere.cursor-deeplink/mcp/install?name=habitat-bunny&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImhhYml0YXQtYnVubnkiXX0=)
 
 ```bash
+# Claude Code
 claude mcp add habitat-bunny -- npx -y habitat-bunny
 ```
 
-### Claude Desktop
+Then say: `let's do a ship sprint`.
 
-Add to `claude_desktop_config.json` (Settings, Developer, Edit Config):
+Built by [Habitat](https://habitat.md): 600+ people, 200+ MVPs, 8 cities, 4 countries. Hover the bunny on the site. It walks.
+
+## Why this exists
+
+AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever: one more feature, one more refactor, never a URL anyone can click.
+
+At Habitat nights the magic was never the advice. It was the container: a clock, a locked scope, and a room waiting to see what you made. This package is that container.
+
+## Why not a system prompt
+
+A prompt is a suggestion. The bunny is a gate.
+
+- Vague ICP? `lock_idea` rejects it. You cannot start building.
+- New feature mid-sprint? `check_scope` parks it in `.habitat/backlog.md`. It is not forgotten, it is not tonight.
+- `localhost:3000`? `ship` refuses. Deploy it.
+- Want to skip to roast? `next_hop` will not skip a hop.
+
+A prompt cannot hold state across Cursor and Claude Code. The bunny can: it is just files in `.habitat/`.
+
+## How a sprint works
+
+Four hops, one clock. Default window is one evening (4 hours).
+
+1. **Lock the idea.** One question at a time, no compliments. Four gates: a specific problem, an ICP you could find 10 of this week, a one-liner a friend can repeat, at least two things you are NOT building tonight.
+2. **Build.** Only the locked one-liner. Side quests go to the backlog. The clock keeps talking.
+3. **Ship.** A live URL. localhost does not count.
+4. **Roast.** Honest read of what shipped vs what was promised, then a ship log ready to paste.
+
+## Event and hackathon mode
+
+Organizers: your whole event can run on a tool every participant installs in one line.
+
+Tell the bunny you are at an event. Paste the brief, theme, rules, deadline, judging criteria. From then on:
+
+- the clock is the real submission deadline
+- the grill checks fit against the theme
+- shipping checks the submission requirements
+- the roast scores against the actual judging criteria
+
+Talk to us: ycanerden@gmail.com
+
+## Install (manual)
+
+Requires Node 20+.
+
+Cursor / Claude Desktop, in `mcp.json`:
 
 ```json
 {
@@ -56,66 +78,38 @@ Add to `claude_desktop_config.json` (Settings, Developer, Edit Config):
 }
 ```
 
-## How a sprint works
-
-Say something like "let's do a ship sprint" and your agent calls `start_sprint`. The bunny asks one question first: solo, with a team, or at an event or hackathon?
-
-Then four hops, one clock. Default window is one evening (4 hours), configurable.
-
-1. **Lock the idea.** The bunny grills you (one question at a time, no compliments, no moving on from vague answers) until four gates pass: a specific problem, an ICP you could find 10 of this week, a one-liner a friend can repeat, and at least two things you are NOT building tonight. Then the idea locks. Nothing gets built before the lock.
-2. **Build.** Your agent builds only the locked one-liner. Every new feature idea that comes up goes through the scope gate and lands in the backlog, not in the code. The bunny keeps announcing the clock.
-3. **Ship.** A real URL a stranger can click. localhost does not count and the bunny will say so.
-4. **Roast.** An honest read of what shipped against what was promised: idea, product, potential, one concrete fix for tomorrow, one validation move. Then the ship log, ready to share.
-
-## Event and hackathon mode
-
-At an event? Tell the bunny. Share whatever materials exist (the brief, theme, rules, submission requirements, deadline, judging criteria) in any form: pasted text, a link, a PDF. Your agent reads them and hands them over. From then on:
-
-- the clock is the real submission deadline
-- the idea grill checks fit against the event theme
-- shipping checks the submission requirements
-- the roast scores you against the actual judging criteria
-
-Organizers: this means your whole event can run on a tool every participant installs in one line. Talk to us: ycanerden@gmail.com.
-
 ## The .habitat folder
-
-All state lives in a `.habitat/` folder in your working directory, as human-readable files you own:
 
 | File | What it holds |
 | --- | --- |
-| `sprint.md` | The current sprint: hops, deadlines, locked idea |
-| `backlog.md` | Every parked feature idea, so nothing is lost, just postponed |
-| `ships.md` | The ship log: everything that made it to a URL, with share templates |
-| `event.md` | The event brief, in event mode |
-| `state.json`, `history.json` | Machine state for the bunny |
+| `sprint.md` | Current sprint: hops, deadlines, locked idea |
+| `backlog.md` | Parked feature ideas |
+| `ships.md` | Everything that made it to a URL, with a share template |
+| `event.md` | Event brief, in event mode |
+| `state.json`, `history.json` | Machine state |
 
-Because it is just files, Cursor and Claude Code share the same sprint on the same machine.
+Delete the folder and the bunny forgets everything.
 
 ## Tools
 
-| Tool | What it does |
-| --- | --- |
-| `start_sprint` | Onboards (solo, team, event), starts the clock, opens the grill |
-| `lock_idea` | Locks problem, ICP, one-liner, out-of-scope list; opens the build hop |
-| `sprint_status` | Time left, current hop, pace verdict, the bunny's nudge |
-| `check_scope` | Parks mid-sprint feature ideas in the backlog |
-| `next_hop` | Closes the current hop, opens the next; refuses to skip gates |
-| `ship` | Records the live URL and summary, writes the ship log |
-| `roast` | Post-ship critique rubric (plus event judging criteria in event mode) |
-| `ship_log` | Past ships, share template, streak fuel |
+`start_sprint` · `lock_idea` · `sprint_status` · `check_scope` · `next_hop` · `ship` · `roast` · `ship_log`
 
-## Design principles
+## Add your ship
 
-- **Complementary, not competitive.** The bunny never writes code and never answers build questions. It returns pacing, gates, and method; your own model does the thinking. The server never calls an LLM, so it costs nothing to run and needs no keys.
-- **Local and yours.** Everything is markdown in your project folder. Delete `.habitat/` and the bunny forgets everything.
-- **Shipped beats perfect.** The whole tool is opinionated toward one outcome: a URL that exists tonight.
+The share object is the ship log, not a star. Run a sprint, then open a PR that appends your log to [SHIPS.md](./SHIPS.md). That is how this repo stays useful: a public wall of things that actually shipped tonight.
+
+Template lives in the ship log the bunny writes for you:
+
+```
+Shipped tonight: <one liner>
+Live at: <url>
+Built in one Habitat sprint.
+```
 
 ## Habitat
 
-Habitat runs one-night ship sprints for AI builders, with partners like Cursor and Lovable. 600+ people, 200+ MVPs, 8 cities, 4 countries.
-
+- Site: [habitat.md](https://habitat.md)
 - Events: [lu.ma/habitat](https://lu.ma/habitat)
-- Web: [joinhabitat.eu](https://joinhabitat.eu)
+- npm: [habitat-bunny](https://www.npmjs.com/package/habitat-bunny)
 
-MIT licensed. One hop at a time.
+MIT. One hop at a time.

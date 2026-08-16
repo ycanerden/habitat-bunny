@@ -29,7 +29,7 @@
     "type": "git",
     "url": "git+https://github.com/ycanerden/habitat-bunny.git"
   },
-  "homepage": "https://joinhabitat.eu",
+  "homepage": "https://habitat.md",
   "engines": {
     "node": ">=20"
   },
