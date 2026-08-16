@@ -1,0 +1,53 @@
+{
+  "name": "habitat-bunny",
+  "version": "0.1.0",
+  "description": "The Habitat bunny: a local MCP server that runs a timeboxed ship sprint inside Cursor, Claude Code, or Claude Desktop. Your agent builds; the bunny paces you, gates scope creep, grills your idea, and keeps the ship log.",
+  "license": "MIT",
+  "author": "Habitat <ycanerden@gmail.com>",
+  "type": "module",
+  "bin": {
+    "habitat-bunny": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "hackathon",
+    "ship",
+    "sprint",
+    "founder",
+    "habitat",
+    "cursor",
+    "claude"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ycanerden/habitat-bunny.git"
+  },
+  "homepage": "https://joinhabitat.eu",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node -e \"require('fs').chmodSync('dist/index.js', 0o755)\"",
+    "dev": "tsc -p tsconfig.json --watch",
+    "smoke": "node scripts/smoke.mjs",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

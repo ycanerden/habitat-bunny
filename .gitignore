@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.tgz
+.habitat/
+.DS_Store
