@@ -26,10 +26,16 @@ export interface DailyHop {
   status: "active" | "shipped" | "missed";
 }
 
+export interface BurrowDraft {
+  ramble: string;
+  at: string;
+}
+
 export interface Burrow {
   version: 1;
   daily?: DailyHop;
   parked: ParkedFeature[];
+  draft?: BurrowDraft;
 }
 
 export interface SprintState {
@@ -115,6 +121,7 @@ export function readBurrow(cwd: string): Burrow {
       version: 1,
       daily: parsed.daily,
       parked: Array.isArray(parsed.parked) ? parsed.parked : [],
+      draft: parsed.draft,
     };
   } catch {
     return { version: 1, parked: [] };
@@ -124,7 +131,7 @@ export function readBurrow(cwd: string): Burrow {
 export function writeBurrow(cwd: string, burrow: Burrow): void {
   ensureDir(cwd);
   fs.writeFileSync(file(cwd, "burrow.json"), JSON.stringify(burrow, null, 2));
-  fs.writeFileSync(file(cwd, "today.md"), renderTodayMd(burrow.daily));
+  fs.writeFileSync(file(cwd, "today.md"), renderTodayMd(burrow.daily, burrow.draft));
   fs.writeFileSync(file(cwd, "backlog.md"), renderBacklogMd(burrow.parked));
 }
 
@@ -431,9 +438,19 @@ function renderBacklogMd(parked: ParkedFeature[]): string {
   return lines.join("\n") + "\n";
 }
 
-function renderTodayMd(daily: DailyHop | undefined): string {
+function renderTodayMd(daily: DailyHop | undefined, draft?: BurrowDraft): string {
   if (!daily) {
-    return "# Today's hop\n\nNo hop locked. Call today and name one thing a stranger can click.\n";
+    if (draft?.ramble) {
+      return [
+        "# Today's hop",
+        "",
+        "Not locked yet. The builder is still figuring it out.",
+        "",
+        `Last ramble: ${draft.ramble}`,
+        "",
+      ].join("\n") + "\n";
+    }
+    return "# Today's hop\n\nNot locked yet. The builder is still figuring it out.\n";
   }
   const lines = [
     `# Today's hop: ${daily.date}`,

@@ -104,13 +104,15 @@ misses a submission requirement scores zero.
 `.trim();
 
 export const DAILY_RULES = `
-DAILY HOP RULES (every building day, not only event night):
-- One hop per calendar day. Name it before you build.
+DAILY RULES (every building day, not only event night):
+- The builder never has to say hop, sprint, or today. You call the tool.
+- If they are already building and they are not sure what it is, that is the
+  job. Grill first. Do not write more code until a lock, or they explicitly
+  tell you to keep going anyway.
 - Done is something a stranger can click: a public URL, a public PR, a live form.
   localhost, "I refactored", and "I thought about it" do not count.
 - Extra feature ideas go through check_scope. Parked, not built.
-- Call today at the start of a building session and whenever the conversation drifts.
-- A 4-hour Habitat night still uses start_sprint. Daily hops do not need a ceremony.
+- A 4-hour Habitat night still uses start_sprint. Daily work does not.
 `.trim();
 
 export const DAILY_GATES = `
@@ -120,6 +122,20 @@ DAILY GATES: today's hop may only lock when both pass.
    Strong: "Ship a public page where a Leuven exchange student pastes a schedule
    and gets a 5-meal grocery list."
 2. Out of scope: at least one tempting thing you are explicitly NOT doing today.
+`.trim();
+
+export const LOST_OPENER = `
+The builder does not owe you a hop name. They are already building and they
+are lost. That is the job.
+
+Open the grill. Ask exactly ONE question. Cite their own words.
+- If they gave a ramble, start from the weakest thing in it. Usually there is
+  no specific person, or a pile of features with no pain.
+- If they gave nothing, ask: "You opened the editor. Who is supposed to use
+  what you are making, and what are they stuck on without it?"
+Do not ask them to name a hop, a sprint, or today's one thing. Those are our
+words, not theirs. Do not write code during the grill.
+When the daily gates pass, call today with intent and out_of_scope. Then build.
 `.trim();
 
 export const ONBOARDING_QUESTION = `
@@ -142,11 +158,12 @@ export function agentContract(): string {
   return `
 HOW TO WORK WITH THE BUNNY (contract for the host agent):
 - You build; the bunny paces. Never ask the bunny technical questions.
-- At the start of every building session, call today. That is the daily
-  primitive. Do not wait for an event or a 4-hour sprint.
+- Never ask the builder to say "today's hop" or "start a sprint". Call today
+  yourself. Pass their words as ramble.
+- Call today as soon as they are building, adding features, or unsure what
+  the product is. Do not wait for a magic phrase. Do not write more code
+  first.
 - If they want a Habitat night or hackathon clock, call start_sprint.
-- Call today or sprint_status at every natural checkpoint: after finishing
-  a task, when the builder goes quiet, or when the conversation drifts.
 - Any new feature idea mid-build MUST go through check_scope before you
   write a single line of it.
 - Relay the bunny's messages to the builder in the bunny's voice.

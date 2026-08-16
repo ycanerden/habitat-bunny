@@ -49,10 +49,21 @@ assert.deepStrictEqual(
 );
 console.log(`tools: ${names.join(", ")}`);
 
-// 2. Daily primitive: empty day asks for a hop
+// 2. Lost in the editor: no magic phrase, grill starts
 const emptyDay = await call("today");
-assert.match(emptyDay, /No hop locked/);
-assert.match(emptyDay, /DAILY HOP RULES/);
+assert.match(emptyDay, /GRILL RULES/);
+assert.match(emptyDay, /opened the editor/i);
+assert.match(emptyDay, /Do not ask them to name a hop/);
+
+// 2b. Ramble from a lost builder is cited, not turned into a form
+const lost = await call("today", {
+  ramble: "I'm building something, not sure what it is, just adding features",
+});
+assert.match(lost, /GRILL RULES/);
+assert.match(lost, /adding features/);
+assert.match(lost, /They are building and they are not sure/);
+assert.ok(fs.existsSync(path.join(workDir, ".habitat", "today.md")), "today.md missing after ramble");
+assert.match(fs.readFileSync(path.join(workDir, ".habitat", "today.md"), "utf8"), /adding features/);
 
 // 3. Vague daily intent is rejected
 assert.match(

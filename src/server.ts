@@ -15,6 +15,7 @@ import {
   FORGE_RULES,
   IDEA_GATES,
   LENSES,
+  LOST_OPENER,
   ONBOARDING_QUESTION,
   ROAST_RUBRIC,
   SHIP_CHECKLIST,
@@ -238,18 +239,25 @@ export function createServer(cwd: string): McpServer {
   server.registerTool(
     "today",
     {
-      title: "Name or check today's hop",
+      title: "Figure out what we are actually building",
       description:
-        "The daily Habitat primitive. Call at the start of every building session and whenever " +
-        "the conversation drifts. Locks one hop for the calendar day: something a stranger can " +
-        "click before the day ends. Not a 4-hour event sprint. Use start_sprint for Habitat " +
-        "nights and hackathons. State lives in the local .habitat/ folder.",
+        "Call this yourself whenever the builder is writing code, adding features, or is not sure " +
+        "what the product is. Do not wait for them to say hop, sprint, today, or Habitat. " +
+        "Pass their own words as ramble. The bunny will grill until there is one thing a stranger " +
+        "can click, then you may build. If they already know the one sentence, pass intent plus " +
+        "out_of_scope to lock. Use start_sprint only for a Habitat night or hackathon.",
       inputSchema: {
+        ramble: z
+          .string()
+          .optional()
+          .describe(
+            "The builder's own words, messy is fine: what they are doing, what they are unsure about, what they opened the editor to make. Required when they are lost. Do not clean it up.",
+          ),
         intent: z
           .string()
           .optional()
           .describe(
-            "Today's one hop: a sentence naming a visible outcome a stranger can click. Omit to read status.",
+            "Only after the grill: one sentence naming a visible outcome a stranger can click today.",
           ),
         out_of_scope: z
           .array(z.string())
@@ -288,15 +296,14 @@ export function createServer(cwd: string): McpServer {
             [
               BUNNY_PERSONA,
               "",
-              `Today's hop is locked: "${daily.intent}"`,
+              `Already locked: "${daily.intent}"`,
               `Not today: ${daily.outOfScope.join("; ")}`,
               dailyClockLine(daily, now),
               cadenceLine(cwd),
               "",
-              DAILY_RULES,
-              "",
-              `Build only that sentence. New ideas go through check_scope. ` +
-                `When a stranger can click it, call ship.`,
+              args.ramble
+                ? `They just said: "${args.ramble.trim()}". If that is a new feature, call check_scope. Do not reopen the grill.`
+                : `Build only that sentence. New ideas go through check_scope. When a stranger can click it, call ship.`,
               "",
               agentContract(),
             ].join("\n"),
@@ -305,28 +312,38 @@ export function createServer(cwd: string): McpServer {
         if (daily && daily.status === "shipped") {
           return text(
             [
-              `Today already shipped. ${daily.shipped?.url ?? ""}`,
+              `Already shipped today. ${daily.shipped?.url ?? ""}`,
               cadenceLine(cwd),
               "",
-              `One hop a day. Park anything else with check_scope. Tomorrow you call today again.`,
+              `Park anything else with check_scope. Do not start a second product today.`,
             ].join("\n"),
           );
         }
+
+        const ramble = args.ramble?.trim() || burrow.draft?.ramble;
+        if (args.ramble?.trim()) {
+          burrow.draft = { ramble: args.ramble.trim(), at: now.toISOString() };
+          writeBurrow(cwd, burrow);
+        }
+
         return text(
           [
             BUNNY_PERSONA,
             "",
-            `No hop locked for ${todayKey(now)}.`,
+            ramble
+              ? `They are building and they are not sure. Their words: "${ramble}"`
+              : `They are building and they have not said what it is. That is enough to start.`,
             cadenceLine(cwd),
             "",
-            DAILY_RULES,
+            FORGE_RULES,
+            "",
+            LENSES,
             "",
             DAILY_GATES,
             "",
-            `Ask exactly one question: "What is the one thing that goes live today?"`,
-            `Then call today again with intent and at least one out_of_scope item.`,
+            LOST_OPENER,
             "",
-            `If they want a full Habitat night (lock, build, ship, roast on a shared clock), use start_sprint.`,
+            DAILY_RULES,
             "",
             agentContract(),
           ].join("\n"),
@@ -373,6 +390,7 @@ export function createServer(cwd: string): McpServer {
         status: "active",
       };
       burrow.daily = locked;
+      burrow.draft = undefined;
       writeBurrow(cwd, burrow);
 
       return text(
@@ -726,9 +744,9 @@ export function createServer(cwd: string): McpServer {
     {
       title: "Scope gate: park a mid-sprint feature idea",
       description:
-        "MUST be called before building any feature idea that is not today's locked hop " +
-        "(or the locked sprint one-liner). Parks it in the persistent backlog so the day " +
-        "stays on one hop. Works every day, even with no sprint.",
+        "Call this yourself before writing any feature that is not the locked outcome. " +
+        "The builder will not say check_scope. Parks the idea in the persistent backlog. " +
+        "Works even when they are lost and nothing is locked yet.",
       inputSchema: {
         feature: z.string().min(3).describe("The new feature or direction that just came up."),
       },

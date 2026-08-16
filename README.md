@@ -6,7 +6,9 @@
 
 The Habitat bunny, every day you build. Not only on event night.
 
-Your agent writes the code. The bunny is the daily ship layer: it names today's one hop, parks everything else, and will not call it shipped until a stranger can click a URL.
+You do not have to say a special phrase. Talk like a human: "I'm building something, not sure what." The agent should call `today` with your words and start grilling. No hop name required.
+
+Your agent writes the code. The bunny stops you from building forever: one person, one pain, one thing a stranger can click. Everything else gets parked.
 
 No backend. No account. No API keys. Nothing leaves your machine.
 
@@ -18,7 +20,7 @@ No backend. No account. No API keys. Nothing leaves your machine.
 claude mcp add habitat-bunny -- npx -y habitat-bunny
 ```
 
-Then say: `what's today's hop`.
+Then keep building. If you are lost, just say you are lost.
 
 Built by [Habitat](https://habitat.md): 600+ people, 200+ MVPs, 8 cities, 4 countries. Hover the bunny on the site. It walks.
 
@@ -26,20 +28,19 @@ Built by [Habitat](https://habitat.md): 600+ people, 200+ MVPs, 8 cities, 4 coun
 
 AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever: one more feature, one more refactor, never a URL anyone can click.
 
-Search MCPs get used every session because they are a primitive: you need a fact, you search. Habitat-bunny is the same shape, for finishing. You need to stay honest about what goes live today, you call `today`.
+Search MCPs get used every session because the agent calls them when you need a fact. You never say "please search." Habitat-bunny is the same shape, for the moment you are building and you are not sure what it is.
 
-The 4-hour Habitat night is still here (`start_sprint`). Daily hops are the default.
+The 4-hour Habitat night is still here (`start_sprint`). Lost-in-the-editor is the default.
 
 ## Daily (the default)
 
-One hop per calendar day. No ceremony.
+You are already in the editor. You are not sure what you are building. That is the product.
 
-1. **Name it.** `today` locks one sentence: a visible outcome a stranger can click before the day ends. "Work on the app" will not lock.
-2. **Build only that.** Side quests go through `check_scope` and land in `.habitat/backlog.md`. The backlog survives across days.
-3. **Ship.** A public URL. localhost does not count. A public PR counts.
-4. **Roast (optional).** Honest read of what shipped vs what you promised this morning.
-
-Call `today` at the start of a building session, the way you would call a search tool when you need the web.
+1. **Talk.** "I'm building something, not sure what." The agent calls `today` and passes your ramble. You never say hop.
+2. **Grill.** One question at a time, no compliments, until there is a specific person, a specific pain, and one thing a stranger can click. "Work on the app" will not lock.
+3. **Build only that.** Side quests go through `check_scope` and land in `.habitat/backlog.md`. The backlog survives across days.
+4. **Ship.** A public URL. localhost does not count. A public PR counts.
+5. **Roast (optional).** Honest read of what shipped vs what you promised.
 
 ## Event and hackathon nights
 
