@@ -34,22 +34,88 @@ const tools = await client.listTools();
 const names = tools.tools.map((t) => t.name).sort();
 assert.deepStrictEqual(
   names,
-  ["check_scope", "lock_idea", "next_hop", "roast", "ship", "ship_log", "sprint_status", "start_sprint"],
+  [
+    "check_scope",
+    "lock_idea",
+    "next_hop",
+    "roast",
+    "ship",
+    "ship_log",
+    "sprint_status",
+    "start_sprint",
+    "today",
+  ],
   `unexpected tool list: ${names.join(", ")}`,
 );
 console.log(`tools: ${names.join(", ")}`);
 
-// 2. Onboarding question when no mode given
+// 2. Lost in the editor: no magic phrase, grill starts
+const emptyDay = await call("today");
+assert.match(emptyDay, /GRILL RULES/);
+assert.match(emptyDay, /opened the editor/i);
+assert.match(emptyDay, /Do not ask them to name a hop/);
+
+// 2b. Ramble from a lost builder is cited, not turned into a form
+const lost = await call("today", {
+  ramble: "I'm building something, not sure what it is, just adding features",
+});
+assert.match(lost, /GRILL RULES/);
+assert.match(lost, /adding features/);
+assert.match(lost, /They are building and they are not sure/);
+assert.ok(fs.existsSync(path.join(workDir, ".habitat", "today.md")), "today.md missing after ramble");
+assert.match(fs.readFileSync(path.join(workDir, ".habitat", "today.md"), "utf8"), /adding features/);
+
+// 3. Vague daily intent is rejected
+assert.match(
+  await call("today", { intent: "work on the app", out_of_scope: ["auth"] }),
+  /Gate 1 failed/,
+);
+
+// 4. Daily lock requires out of scope
+assert.match(
+  await call("today", {
+    intent: "Ship a public page where a Leuven student pastes a schedule and gets a grocery list.",
+  }),
+  /Gate 2 failed/,
+);
+
+// 5. Daily hop locks, parks, ships, roasts
+const lockedDay = await call("today", {
+  intent: "Ship a public page where a Leuven student pastes a schedule and gets a grocery list.",
+  out_of_scope: ["auth"],
+  hours: 2,
+});
+assert.match(lockedDay, /Locked for /);
+assert.ok(fs.existsSync(path.join(workDir, ".habitat", "today.md")), "today.md missing");
+assert.ok(fs.existsSync(path.join(workDir, ".habitat", "burrow.json")), "burrow.json missing");
+
+const dailyParked = await call("check_scope", { feature: "dark mode toggle" });
+assert.match(dailyParked, /Parked/);
+assert.match(fs.readFileSync(path.join(workDir, ".habitat", "backlog.md"), "utf8"), /dark mode/);
+
+assert.match(
+  await call("ship", { url: "http://localhost:3000", summary: "daily meal planner is live" }),
+  /localhost is not shipped/,
+);
+const dailyShipped = await call("ship", {
+  url: "https://daily-hop.vercel.app",
+  summary: "Public schedule-to-grocery page is live.",
+});
+assert.match(dailyShipped, /SHIPPED/);
+assert.match(await call("roast"), /ROAST INSTRUCTIONS/);
+assert.match(await call("ship_log"), /1 shipped hop/);
+
+// 6. Onboarding question when no mode given
 const onboarding = await call("start_sprint");
 assert.match(onboarding, /solo, with a team, or/i);
 
-// 3. Status with no sprint
+// 7. Status with no sprint
 assert.match(await call("sprint_status"), /No active sprint/);
 
-// 4. Event mode requires a brief
+// 8. Event mode requires a brief
 assert.match(await call("start_sprint", { mode: "event" }), /needs the event materials/i);
 
-// 5. Start an event sprint with brief and deadline
+// 9. Start an event sprint with brief and deadline
 const deadline = new Date(Date.now() + 3 * 3600_000).toISOString();
 const started = await call("start_sprint", {
   mode: "event",
@@ -63,10 +129,10 @@ assert.match(started, /GRILL RULES/);
 assert.match(started, /EVENT GATE/);
 assert.ok(fs.existsSync(path.join(workDir, ".habitat", "event.md")), "event.md missing");
 
-// 6. Double start is refused
+// 10. Double start is refused
 assert.match(await call("start_sprint", { mode: "solo" }), /already a live sprint/i);
 
-// 7. Vague ICP is rejected
+// 11. Vague ICP is rejected
 assert.match(
   await call("lock_idea", {
     idea: "students waste money on food delivery every week",
@@ -77,7 +143,7 @@ assert.match(
   /Gate 2 failed/,
 );
 
-// 8. Too few out-of-scope items rejected
+// 12. Too few out-of-scope items rejected
 assert.match(
   await call("lock_idea", {
     idea: "students waste money on food delivery every week",
@@ -88,7 +154,7 @@ assert.match(
   /Gate 4 failed/,
 );
 
-// 9. Proper lock advances to build
+// 13. Proper lock advances to build
 const locked = await call("lock_idea", {
   idea: "students waste money on food delivery every week",
   icp: "first-year exchange students in Leuven who order delivery 3+ times a week",
@@ -98,18 +164,19 @@ const locked = await call("lock_idea", {
 assert.match(locked, /Locked\./);
 assert.match(locked, /BUILD HOP RULES/);
 
-// 10. Scope gate parks features
+// 14. Scope gate parks features and keeps the daily backlog
 const parked = await call("check_scope", { feature: "AI chatbot that suggests wine pairings" });
 assert.match(parked, /Parked/);
 const backlog = fs.readFileSync(path.join(workDir, ".habitat", "backlog.md"), "utf8");
 assert.match(backlog, /wine pairings/);
+assert.match(backlog, /dark mode/);
 
-// 11. Can't ship from ship-hop shortcut without URL; advance then gate localhost
+// 15. Can't ship from ship-hop shortcut without URL; advance then gate localhost
 assert.match(await call("next_hop"), /Ship.*is open|SHIP HOP CHECKLIST/s);
 assert.match(await call("ship", { url: "http://localhost:3000", summary: "meal planner mvp with grocery list" }), /localhost is not shipped/);
 assert.match(await call("ship", { url: "not-a-url", summary: "meal planner mvp with grocery list" }), /not a URL/);
 
-// 12. Real ship works, logs, and points at event requirements
+// 16. Real ship works, logs, and points at event requirements
 const shippedOut = await call("ship", {
   url: "https://meal-hop.vercel.app",
   summary: "Live meal planner: paste schedule, get 5 meals and one grocery list.",
@@ -118,20 +185,21 @@ assert.match(shippedOut, /SHIPPED/);
 assert.match(shippedOut, /EVENT CHECK/);
 assert.ok(fs.readFileSync(path.join(workDir, ".habitat", "ships.md"), "utf8").includes("meal-hop.vercel.app"));
 
-// 13. Roast returns rubric with event addendum and closes the sprint
+// 17. Roast returns rubric with event addendum and closes the sprint
 const roast = await call("roast");
 assert.match(roast, /ROAST INSTRUCTIONS/);
 assert.match(roast, /EVENT MODE ADDENDUM/);
 assert.match(roast, /Share template/);
 
-// 14. Ship log records the run
+// 18. Ship log records the daily hop and the sprint
 const log = await call("ship_log");
-assert.match(log, /1 shipped sprint/);
+assert.match(log, /2 shipped hop/);
+assert.match(log, /daily/);
 
-// 15. A new sprint can start after the old one is done
+// 19. A new sprint can start after the old one is done
 assert.match(await call("start_sprint", { mode: "solo", hours: 2 }), /Sprint .* is live/);
 
-// 16. State files are human-readable markdown
+// 20. State files are human-readable markdown
 const sprintMd = fs.readFileSync(path.join(workDir, ".habitat", "sprint.md"), "utf8");
 assert.match(sprintMd, /# Habitat sprint/);
 

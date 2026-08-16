@@ -5,7 +5,7 @@ The most useful contribution is a shipped URL.
 ## Add a ship (best first PR)
 
 1. Install habitat-bunny in Cursor or Claude Code.
-2. Run a sprint. Get a public URL. localhost does not count.
+2. Call today (or run a sprint). Get a public URL. localhost does not count.
 3. Copy the share block from `.habitat/ships.md`.
 4. Open a PR that appends it to [SHIPS.md](./SHIPS.md).
 

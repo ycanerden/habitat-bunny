@@ -47,7 +47,7 @@ Subject: the Habitat night now fits in your editor
 
 We turned the Habitat sprint into a tool. It is called habitat-bunny: a tiny local MCP server for Cursor, Claude Code, and Claude Desktop.
 
-Your AI builds. The bunny keeps the clock, grills your idea before you build it, parks your scope creep, and does not let you stop before there is a URL a stranger can click. Same ritual as our evenings: lock, build, ship, roast.
+Your AI builds. The bunny is the daily ship layer: name today's hop, park the rest, and do not stop before there is a URL a stranger can click. Same honesty as our evenings, every day you open the editor.
 
 Free, open source, nothing leaves your machine. Install:
 

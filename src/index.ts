@@ -10,7 +10,7 @@ async function main(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // stdout belongs to the MCP protocol; log to stderr only.
-  console.error("habitat-bunny is listening. One hop at a time.");
+  console.error("habitat-bunny is listening. Call today. One hop at a time.");
 }
 
 main().catch((error: unknown) => {
