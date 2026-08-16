@@ -9,10 +9,27 @@ import path from "node:path";
 
 export type Hop = "idea" | "build" | "ship" | "roast" | "done";
 export type Mode = "solo" | "team" | "event";
+export type HistoryMode = Mode | "daily";
 
 export interface ParkedFeature {
   feature: string;
   at: string;
+}
+
+export interface DailyHop {
+  date: string;
+  intent: string;
+  outOfScope: string[];
+  startedAt: string;
+  endsAt: string;
+  shipped?: { url: string; summary: string; at: string };
+  status: "active" | "shipped" | "missed";
+}
+
+export interface Burrow {
+  version: 1;
+  daily?: DailyHop;
+  parked: ParkedFeature[];
 }
 
 export interface SprintState {
@@ -40,10 +57,11 @@ export interface SprintState {
 
 export interface SprintHistoryEntry {
   id: string;
-  mode: Mode;
+  mode: HistoryMode;
   startedAt: string;
   finishedAt: string;
   shipped: boolean;
+  date?: string;
   url?: string;
   summary?: string;
   oneLiner?: string;
@@ -82,7 +100,138 @@ export function writeState(cwd: string, state: SprintState): void {
   ensureDir(cwd);
   fs.writeFileSync(file(cwd, "state.json"), JSON.stringify(state, null, 2));
   fs.writeFileSync(file(cwd, "sprint.md"), renderSprintMd(state));
-  fs.writeFileSync(file(cwd, "backlog.md"), renderBacklogMd(state));
+  const burrow = readBurrow(cwd);
+  mergeParked(burrow, state.parked);
+  writeBurrow(cwd, burrow);
+}
+
+export function readBurrow(cwd: string): Burrow {
+  const p = file(cwd, "burrow.json");
+  if (!fs.existsSync(p)) return { version: 1, parked: [] };
+  try {
+    const parsed = JSON.parse(fs.readFileSync(p, "utf8")) as Burrow;
+    if (parsed.version !== 1) return { version: 1, parked: [] };
+    return {
+      version: 1,
+      daily: parsed.daily,
+      parked: Array.isArray(parsed.parked) ? parsed.parked : [],
+    };
+  } catch {
+    return { version: 1, parked: [] };
+  }
+}
+
+export function writeBurrow(cwd: string, burrow: Burrow): void {
+  ensureDir(cwd);
+  fs.writeFileSync(file(cwd, "burrow.json"), JSON.stringify(burrow, null, 2));
+  fs.writeFileSync(file(cwd, "today.md"), renderTodayMd(burrow.daily));
+  fs.writeFileSync(file(cwd, "backlog.md"), renderBacklogMd(burrow.parked));
+}
+
+export function mergeParked(burrow: Burrow, items: ParkedFeature[]): void {
+  for (const item of items) {
+    if (!burrow.parked.some((parked) => parked.feature === item.feature)) {
+      burrow.parked.push(item);
+    }
+  }
+}
+
+export function parkFeature(
+  cwd: string,
+  feature: string,
+  now = new Date(),
+): ParkedFeature {
+  const item: ParkedFeature = { feature: feature.trim(), at: now.toISOString() };
+  const state = readState(cwd);
+  if (state && state.status === "active") {
+    if (!state.parked.some((parked) => parked.feature === item.feature)) {
+      state.parked.push(item);
+    }
+    writeState(cwd, state);
+    return item;
+  }
+  const burrow = readBurrow(cwd);
+  mergeParked(burrow, [item]);
+  writeBurrow(cwd, burrow);
+  return item;
+}
+
+export function todayKey(now = new Date()): string {
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function endOfLocalDay(now = new Date()): Date {
+  const end = new Date(now);
+  end.setHours(23, 59, 59, 999);
+  return end;
+}
+
+export function rollDailyIfNeeded(cwd: string, now = new Date()): Burrow {
+  const burrow = readBurrow(cwd);
+  const key = todayKey(now);
+  if (!burrow.daily || burrow.daily.date === key) return burrow;
+  if (burrow.daily.status === "active") {
+    burrow.daily.status = "missed";
+    appendHistory(cwd, {
+      id: `daily-${burrow.daily.date}`,
+      mode: "daily",
+      date: burrow.daily.date,
+      startedAt: burrow.daily.startedAt,
+      finishedAt: now.toISOString(),
+      shipped: false,
+      oneLiner: burrow.daily.intent,
+    });
+  }
+  burrow.daily = undefined;
+  writeBurrow(cwd, burrow);
+  return burrow;
+}
+
+function shiftDay(key: string, delta: number): string {
+  const parts = key.split("-").map(Number);
+  const year = parts[0];
+  const month = parts[1];
+  const day = parts[2];
+  if (year === undefined || month === undefined || day === undefined) {
+    return key;
+  }
+  const date = new Date(year, month - 1, day);
+  date.setDate(date.getDate() + delta);
+  return todayKey(date);
+}
+
+function entryDay(entry: SprintHistoryEntry): string {
+  return entry.date ?? entry.finishedAt.slice(0, 10);
+}
+
+export function shipStreak(
+  history: SprintHistoryEntry[],
+  now = new Date(),
+): number {
+  const days = new Set(
+    history.filter((entry) => entry.shipped).map((entry) => entryDay(entry)),
+  );
+  let cursor = todayKey(now);
+  if (!days.has(cursor)) cursor = shiftDay(cursor, -1);
+  let streak = 0;
+  while (days.has(cursor)) {
+    streak += 1;
+    cursor = shiftDay(cursor, -1);
+  }
+  return streak;
+}
+
+export function shipsThisWeek(
+  history: SprintHistoryEntry[],
+  now = new Date(),
+): number {
+  const weekAgo = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+  return history.filter(
+    (entry) => entry.shipped && new Date(entry.finishedAt).getTime() >= weekAgo,
+  ).length;
 }
 
 export function writeEventBrief(cwd: string, brief: string): void {
@@ -265,19 +414,45 @@ function renderSprintMd(state: SprintState): string {
   return lines.join("\n") + "\n";
 }
 
-function renderBacklogMd(state: SprintState): string {
+function renderBacklogMd(parked: ParkedFeature[]): string {
   const lines = [
     "# Habitat backlog",
     "",
-    "Ideas the bunny parked so the sprint could stay on one hop. Revisit tomorrow, not tonight.",
+    "Ideas the bunny parked so you could stay on one hop. Revisit tomorrow, not today.",
     "",
   ];
-  if (state.parked.length === 0) {
+  if (parked.length === 0) {
     lines.push("(empty so far)");
   } else {
-    for (const item of state.parked) {
+    for (const item of parked) {
       lines.push(`- [ ] ${item.feature} (parked ${fmtClock(item.at)})`);
     }
+  }
+  return lines.join("\n") + "\n";
+}
+
+function renderTodayMd(daily: DailyHop | undefined): string {
+  if (!daily) {
+    return "# Today's hop\n\nNo hop locked. Call today and name one thing a stranger can click.\n";
+  }
+  const lines = [
+    `# Today's hop: ${daily.date}`,
+    "",
+    `- Status: ${daily.status}`,
+    `- Intent: ${daily.intent}`,
+    `- Not today: ${daily.outOfScope.join("; ") || "(none named)"}`,
+    `- Started: ${fmtClock(daily.startedAt)}`,
+    `- Ends: ${fmtClock(daily.endsAt)}`,
+  ];
+  if (daily.shipped) {
+    lines.push(
+      "",
+      "## Shipped",
+      "",
+      `- URL: ${daily.shipped.url}`,
+      `- Summary: ${daily.shipped.summary}`,
+      `- At: ${fmtClock(daily.shipped.at)}`,
+    );
   }
   return lines.join("\n") + "\n";
 }

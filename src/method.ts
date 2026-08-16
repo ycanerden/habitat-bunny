@@ -103,6 +103,25 @@ submission requirement is met BEFORE the deadline. A brilliant build that
 misses a submission requirement scores zero.
 `.trim();
 
+export const DAILY_RULES = `
+DAILY HOP RULES (every building day, not only event night):
+- One hop per calendar day. Name it before you build.
+- Done is something a stranger can click: a public URL, a public PR, a live form.
+  localhost, "I refactored", and "I thought about it" do not count.
+- Extra feature ideas go through check_scope. Parked, not built.
+- Call today at the start of a building session and whenever the conversation drifts.
+- A 4-hour Habitat night still uses start_sprint. Daily hops do not need a ceremony.
+`.trim();
+
+export const DAILY_GATES = `
+DAILY GATES: today's hop may only lock when both pass.
+1. Intent: one sentence that names a visible outcome a stranger could click today.
+   Weak: "work on the app", "fix bugs", "improve UX", "refactor".
+   Strong: "Ship a public page where a Leuven exchange student pastes a schedule
+   and gets a 5-meal grocery list."
+2. Out of scope: at least one tempting thing you are explicitly NOT doing today.
+`.trim();
+
 export const ONBOARDING_QUESTION = `
 Before anything else, ask the builder exactly this, as one question:
 "Quick check before we hop: are you building solo, with a team, or are you
@@ -123,8 +142,11 @@ export function agentContract(): string {
   return `
 HOW TO WORK WITH THE BUNNY (contract for the host agent):
 - You build; the bunny paces. Never ask the bunny technical questions.
-- Call sprint_status at every natural checkpoint: after finishing a task,
-  when the builder goes quiet, or when the conversation drifts.
+- At the start of every building session, call today. That is the daily
+  primitive. Do not wait for an event or a 4-hour sprint.
+- If they want a Habitat night or hackathon clock, call start_sprint.
+- Call today or sprint_status at every natural checkpoint: after finishing
+  a task, when the builder goes quiet, or when the conversation drifts.
 - Any new feature idea mid-build MUST go through check_scope before you
   write a single line of it.
 - Relay the bunny's messages to the builder in the bunny's voice.

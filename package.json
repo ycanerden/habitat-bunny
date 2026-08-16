@@ -1,7 +1,7 @@
 {
   "name": "habitat-bunny",
-  "version": "0.1.0",
-  "description": "The Habitat bunny: a local MCP server that runs a timeboxed ship sprint inside Cursor, Claude Code, or Claude Desktop. Your agent builds; the bunny paces you, gates scope creep, grills your idea, and keeps the ship log.",
+  "version": "0.2.0",
+  "description": "The Habitat bunny: a local MCP server that keeps you shipping every day inside Cursor, Claude Code, or Claude Desktop. Call today. Your agent builds; the bunny paces the hop, parks scope creep, and will not call it shipped until a stranger can click a URL.",
   "license": "MIT",
   "author": "Habitat <ycanerden@gmail.com>",
   "type": "module",

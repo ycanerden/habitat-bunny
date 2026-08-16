@@ -9,6 +9,8 @@ import {
   agentContract,
   BUILD_RULES,
   BUNNY_PERSONA,
+  DAILY_GATES,
+  DAILY_RULES,
   EVENT_ROAST_ADDENDUM,
   FORGE_RULES,
   IDEA_GATES,
@@ -20,18 +22,26 @@ import {
 import {
   appendHistory,
   appendShipLog,
+  endOfLocalDay,
   fmtClock,
   fmtDuration,
   hopLabel,
-  nextHopOf,
   pace,
+  parkFeature,
+  readBurrow,
   readEventBrief,
   readHistory,
   readState,
+  rollDailyIfNeeded,
   scheduleHops,
+  shipsThisWeek,
+  shipStreak,
   slugify,
+  todayKey,
+  writeBurrow,
   writeEventBrief,
   writeState,
+  type DailyHop,
   type SprintState,
 } from "./state.js";
 
@@ -54,15 +64,130 @@ const VAGUE_ICP = [
   /^smes?$/i,
 ];
 
+const VAGUE_TODAY = [
+  /^work on\b/i,
+  /^improve\b/i,
+  /^fix bugs?\b/i,
+  /^refactor\b/i,
+  /^polish\b/i,
+  /^update\b/i,
+  /^think about\b/i,
+  /^plan\b/i,
+];
+
 function text(body: string) {
   return { content: [{ type: "text" as const, text: body.trim() }] };
 }
 
 function noSprint() {
   return text(
-    `No active sprint in this folder. The burrow is empty.\n\n` +
-      `Call start_sprint to begin. ${ONBOARDING_QUESTION}`,
+    `No active sprint in this folder.\n\n` +
+      `For a normal building day, call today. For a Habitat night or hackathon, call start_sprint.`,
   );
+}
+
+function isVagueDailyIntent(intent: string): boolean {
+  const trimmed = intent.trim();
+  if (trimmed.length < 20) return true;
+  if (trimmed.split(/\s+/).length < 5) return true;
+  return VAGUE_TODAY.some((rx) => rx.test(trimmed));
+}
+
+function rejectShipUrl(url: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return `"${url}" is not a URL the bunny can hop to. Full https link, please.`;
+  }
+  if (!/^https?:$/.test(parsed.protocol)) {
+    return `The ship URL must be http(s). "${parsed.protocol}" does not count as shipped.`;
+  }
+  if (
+    parsed.hostname === "localhost" ||
+    parsed.hostname === "127.0.0.1" ||
+    parsed.hostname.endsWith(".local")
+  ) {
+    return (
+      `localhost is not shipped; it is a rehearsal. Deploy it where a stranger can click it ` +
+      `(Vercel, Netlify, a share link, GitHub Pages), then call ship again with the public URL.`
+    );
+  }
+  return null;
+}
+
+function dailyClockLine(daily: DailyHop, now = new Date()): string {
+  if (daily.status === "shipped") {
+    return `Today's hop already shipped${daily.shipped ? `: ${daily.shipped.url}` : "."}`;
+  }
+  const remaining = new Date(daily.endsAt).getTime() - now.getTime();
+  if (remaining < 0) {
+    return `CLOCK: the day ended ${fmtDuration(remaining)}. Ship what exists.`;
+  }
+  return `CLOCK: ${fmtDuration(remaining)} left in today's hop.`;
+}
+
+function shareTemplateDaily(daily: DailyHop): string {
+  const what = daily.shipped?.summary ?? daily.intent;
+  const url = daily.shipped?.url ?? "";
+  return [
+    "Share template (paste anywhere):",
+    "",
+    `> Shipped today: ${what}`,
+    `> Live at: ${url}`,
+    `> One hop. Habitat bunny.`,
+  ].join("\n");
+}
+
+function cadenceLine(cwd: string): string {
+  const history = readHistory(cwd);
+  const week = shipsThisWeek(history);
+  const streak = shipStreak(history);
+  const parked = readBurrow(cwd).parked.length;
+  return (
+    `This week: ${week} ship${week === 1 ? "" : "s"}. ` +
+    `Streak: ${streak} day${streak === 1 ? "" : "s"}. ` +
+    `Parked: ${parked}.`
+  );
+}
+
+function recordDailyShip(
+  cwd: string,
+  daily: DailyHop,
+  url: string,
+  summary: string,
+  now: Date,
+): DailyHop {
+  daily.shipped = { url, summary: summary.trim(), at: now.toISOString() };
+  daily.status = "shipped";
+  const burrow = readBurrow(cwd);
+  burrow.daily = daily;
+  writeBurrow(cwd, burrow);
+  appendHistory(cwd, {
+    id: `daily-${daily.date}`,
+    mode: "daily",
+    date: daily.date,
+    startedAt: daily.startedAt,
+    finishedAt: daily.shipped.at,
+    shipped: true,
+    url,
+    summary: daily.shipped.summary,
+    oneLiner: daily.intent,
+  });
+  appendShipLog(
+    cwd,
+    [
+      `## daily-${daily.date}`,
+      "",
+      `- Shipped: ${daily.shipped.summary}`,
+      `- URL: ${daily.shipped.url}`,
+      `- Hop: ${daily.intent}`,
+      `- Mode: daily`,
+      "",
+      shareTemplateDaily(daily),
+    ].join("\n"),
+  );
+  return daily;
 }
 
 function clockLine(state: SprintState): string {
@@ -108,6 +233,165 @@ export function createServer(cwd: string): McpServer {
     name: "habitat-bunny",
     version: "0.1.0",
   });
+
+  // ---- today ---------------------------------------------------------------
+  server.registerTool(
+    "today",
+    {
+      title: "Name or check today's hop",
+      description:
+        "The daily Habitat primitive. Call at the start of every building session and whenever " +
+        "the conversation drifts. Locks one hop for the calendar day: something a stranger can " +
+        "click before the day ends. Not a 4-hour event sprint. Use start_sprint for Habitat " +
+        "nights and hackathons. State lives in the local .habitat/ folder.",
+      inputSchema: {
+        intent: z
+          .string()
+          .optional()
+          .describe(
+            "Today's one hop: a sentence naming a visible outcome a stranger can click. Omit to read status.",
+          ),
+        out_of_scope: z
+          .array(z.string())
+          .optional()
+          .describe("At least one tempting thing you are NOT doing today. Required when locking an intent."),
+        hours: z
+          .number()
+          .min(0.5)
+          .max(16)
+          .optional()
+          .describe("Optional focus window in hours. Default is the rest of the local calendar day."),
+      },
+    },
+    async (args) => {
+      const now = new Date();
+      const sprint = readState(cwd);
+      if (sprint && sprint.status === "active") {
+        return text(
+          [
+            `A Habitat sprint is already live (${sprint.id}). The night takes the clock.`,
+            clockLine(sprint),
+            `Current hop: ${hopLabel(sprint.currentHop)}.`,
+            sprint.idea ? `Locked one-liner: "${sprint.idea.oneLiner}".` : "Idea is not locked yet.",
+            "",
+            `Call sprint_status to continue the night. Daily hops wait until the sprint closes.`,
+          ].join("\n"),
+        );
+      }
+
+      const burrow = rollDailyIfNeeded(cwd, now);
+      const daily = burrow.daily;
+
+      if (!args.intent) {
+        if (daily && daily.status === "active") {
+          return text(
+            [
+              BUNNY_PERSONA,
+              "",
+              `Today's hop is locked: "${daily.intent}"`,
+              `Not today: ${daily.outOfScope.join("; ")}`,
+              dailyClockLine(daily, now),
+              cadenceLine(cwd),
+              "",
+              DAILY_RULES,
+              "",
+              `Build only that sentence. New ideas go through check_scope. ` +
+                `When a stranger can click it, call ship.`,
+              "",
+              agentContract(),
+            ].join("\n"),
+          );
+        }
+        if (daily && daily.status === "shipped") {
+          return text(
+            [
+              `Today already shipped. ${daily.shipped?.url ?? ""}`,
+              cadenceLine(cwd),
+              "",
+              `One hop a day. Park anything else with check_scope. Tomorrow you call today again.`,
+            ].join("\n"),
+          );
+        }
+        return text(
+          [
+            BUNNY_PERSONA,
+            "",
+            `No hop locked for ${todayKey(now)}.`,
+            cadenceLine(cwd),
+            "",
+            DAILY_RULES,
+            "",
+            DAILY_GATES,
+            "",
+            `Ask exactly one question: "What is the one thing that goes live today?"`,
+            `Then call today again with intent and at least one out_of_scope item.`,
+            "",
+            `If they want a full Habitat night (lock, build, ship, roast on a shared clock), use start_sprint.`,
+            "",
+            agentContract(),
+          ].join("\n"),
+        );
+      }
+
+      if (daily && daily.status === "shipped") {
+        return text(
+          `Today already shipped: ${daily.shipped?.url ?? daily.intent}. ` +
+            `Park "${args.intent.trim()}" with check_scope. One hop a day.`,
+        );
+      }
+      if (daily && daily.status === "active") {
+        return text(
+          `Today's hop is already locked: "${daily.intent}". No re-litigating mid-day. ` +
+            `New directions go to check_scope. ${dailyClockLine(daily, now)}`,
+        );
+      }
+
+      if (isVagueDailyIntent(args.intent)) {
+        return text(
+          `Gate 1 failed: "${args.intent.trim()}" is a chore, not a hop. ` +
+            `Name a visible outcome a stranger can click today. ` +
+            `"Work on the app" and "fix bugs" will never lock.\n\n${DAILY_GATES}`,
+        );
+      }
+      const outOfScope = (args.out_of_scope ?? []).map((item) => item.trim()).filter(Boolean);
+      if (outOfScope.length < 1) {
+        return text(
+          `Gate 2 failed: name at least one thing you are NOT doing today. ` +
+            `That is how the hop stays one hop.\n\n${DAILY_GATES}`,
+        );
+      }
+
+      const endsAt = args.hours
+        ? new Date(now.getTime() + args.hours * 3_600_000)
+        : endOfLocalDay(now);
+      const locked: DailyHop = {
+        date: todayKey(now),
+        intent: args.intent.trim(),
+        outOfScope,
+        startedAt: now.toISOString(),
+        endsAt: endsAt.toISOString(),
+        status: "active",
+      };
+      burrow.daily = locked;
+      writeBurrow(cwd, burrow);
+
+      return text(
+        [
+          `Locked for ${locked.date}. "${locked.intent}"`,
+          `Not today: ${locked.outOfScope.join("; ")}`,
+          "",
+          dailyClockLine(locked, now),
+          cadenceLine(cwd),
+          "",
+          DAILY_RULES,
+          "",
+          BUILD_RULES.replaceAll("sprint_status", "today").replaceAll("tonight", "today"),
+          "",
+          `Now build only that sentence. The bunny will keep the day honest.`,
+        ].join("\n"),
+      );
+    },
+  );
 
   // ---- start_sprint --------------------------------------------------------
   server.registerTool(
@@ -182,6 +466,7 @@ export function createServer(cwd: string): McpServer {
         appendHistory(cwd, {
           id: existing.id,
           mode: existing.mode,
+          date: existing.startedAt.slice(0, 10),
           startedAt: existing.startedAt,
           finishedAt: new Date().toISOString(),
           shipped: Boolean(existing.shipped),
@@ -441,33 +726,40 @@ export function createServer(cwd: string): McpServer {
     {
       title: "Scope gate: park a mid-sprint feature idea",
       description:
-        "MUST be called before building any feature idea that appears after the idea was locked. " +
-        "The bunny parks it in the backlog so the sprint stays on one hop.",
+        "MUST be called before building any feature idea that is not today's locked hop " +
+        "(or the locked sprint one-liner). Parks it in the persistent backlog so the day " +
+        "stays on one hop. Works every day, even with no sprint.",
       inputSchema: {
         feature: z.string().min(3).describe("The new feature or direction that just came up."),
       },
     },
     async (args) => {
       const state = readState(cwd);
-      if (!state || state.status !== "active") return noSprint();
-      if (!state.idea) {
+      if (state && state.status === "active" && !state.idea) {
         return text(
           `Nothing is locked yet, so there is no scope to protect. Finish the grill and lock_idea first. ` +
             `If "${args.feature}" is the actual idea, grill that one.`,
         );
       }
 
-      state.parked.push({ feature: args.feature.trim(), at: new Date().toISOString() });
-      writeState(cwd, state);
+      parkFeature(cwd, args.feature);
+      const daily = rollDailyIfNeeded(cwd).daily;
+      const locked =
+        state && state.status === "active" && state.idea
+          ? state.idea.oneLiner
+          : daily && daily.status === "active"
+            ? daily.intent
+            : null;
 
       return text(
         [
-          `Parked: "${args.feature.trim()}". It is written down in .habitat/backlog.md, it will not be forgotten, and it is not happening tonight.`,
+          `Parked: "${args.feature.trim()}". It is written down in .habitat/backlog.md, it will not be forgotten, and it is not happening today.`,
           "",
-          `Tonight is exactly one sentence: "${state.idea.oneLiner}". ` +
-            `Every minute on a side quest is a minute the ship hop does not get.`,
+          locked
+            ? `Today is exactly one sentence: "${locked}". Every minute on a side quest is a minute the ship does not get.`
+            : `No hop is locked. Call today if you want a hop to protect, or keep parking until you do.`,
           "",
-          clockLine(state),
+          state && state.status === "active" ? clockLine(state) : daily ? dailyClockLine(daily) : cadenceLine(cwd),
           "",
           `Back to the locked scope. One hop at a time.`,
         ].join("\n"),
@@ -536,7 +828,7 @@ export function createServer(cwd: string): McpServer {
       title: "Record the shipped artifact",
       description:
         "Records the live URL and a one-sentence summary of what actually shipped. " +
-        "Writes the ship log and opens the roast hop.",
+        "Works on a daily hop or a sprint. localhost is refused. Writes the ship log.",
       inputSchema: {
         url: z.string().describe("The live, publicly clickable URL."),
         summary: z
@@ -546,81 +838,95 @@ export function createServer(cwd: string): McpServer {
       },
     },
     async (args) => {
+      const urlError = rejectShipUrl(args.url);
+      if (urlError) return text(urlError);
+
       const state = readState(cwd);
-      if (!state || state.status !== "active") return noSprint();
-      if (!state.idea) {
-        return text(
-          `Shipping before locking is just publishing a guess. Grill, lock_idea, then build, then ship.`,
+      if (state && state.status === "active") {
+        if (!state.idea) {
+          return text(
+            `Shipping before locking is just publishing a guess. Grill, lock_idea, then build, then ship.`,
+          );
+        }
+        if (state.shipped) {
+          return text(
+            `Already shipped: ${state.shipped.url}. One artifact per sprint. Call roast to finish.`,
+          );
+        }
+
+        state.shipped = {
+          url: args.url,
+          summary: args.summary.trim(),
+          at: new Date().toISOString(),
+        };
+        state.currentHop = "roast";
+        writeState(cwd, state);
+
+        const eventBrief = state.mode === "event" ? readEventBrief(cwd) : null;
+        const durationMs =
+          new Date(state.shipped.at).getTime() - new Date(state.startedAt).getTime();
+
+        appendShipLog(
+          cwd,
+          [
+            `## ${state.id}`,
+            "",
+            `- Shipped: ${state.shipped.summary}`,
+            `- URL: ${state.shipped.url}`,
+            `- One-liner: ${state.idea.oneLiner}`,
+            `- Mode: ${state.mode}${state.event?.name ? ` (${state.event.name})` : ""}`,
+            `- Time from start to ship: ${fmtDuration(durationMs)}`,
+            `- Parked along the way: ${state.parked.length}`,
+            "",
+            shareTemplate(state),
+          ].join("\n"),
         );
-      }
-      if (state.shipped) {
+
         return text(
-          `Already shipped: ${state.shipped.url}. One artifact per sprint. Call roast to finish.`,
+          [
+            `SHIPPED. ${fmtDuration(durationMs)} from start to a live URL. That is the whole point of the ritual.`,
+            "",
+            `Logged to .habitat/ships.md.`,
+            "",
+            eventBrief
+              ? `EVENT CHECK before the deadline: re-read the brief in .habitat/event.md and verify every ` +
+                `submission requirement is met (form submitted, repo linked, demo video, whatever the rules say). ` +
+                `A great build that misses a requirement scores zero.\n`
+              : "",
+            `One hop left: call roast. The honest read is where the learning lives.`,
+            "",
+            clockLine(state),
+          ].join("\n"),
         );
       }
 
-      let parsed: URL;
-      try {
-        parsed = new URL(args.url);
-      } catch {
-        return text(`"${args.url}" is not a URL the bunny can hop to. Full https link, please.`);
-      }
-      if (!/^https?:$/.test(parsed.protocol)) {
-        return text(`The ship URL must be http(s). "${parsed.protocol}" does not count as shipped.`);
-      }
-      if (
-        parsed.hostname === "localhost" ||
-        parsed.hostname === "127.0.0.1" ||
-        parsed.hostname.endsWith(".local")
-      ) {
+      const now = new Date();
+      const burrow = rollDailyIfNeeded(cwd, now);
+      if (burrow.daily?.status === "shipped") {
         return text(
-          `localhost is not shipped; it is a rehearsal. Deploy it where a stranger can click it ` +
-            `(Vercel, Netlify, a share link, GitHub Pages), then call ship again with the public URL.`,
+          `Already shipped today: ${burrow.daily.shipped?.url}. One hop a day. Call roast or wait until tomorrow.`,
         );
       }
-
-      state.shipped = {
-        url: args.url,
-        summary: args.summary.trim(),
-        at: new Date().toISOString(),
+      const daily: DailyHop = burrow.daily ?? {
+        date: todayKey(now),
+        intent: args.summary.trim(),
+        outOfScope: [],
+        startedAt: now.toISOString(),
+        endsAt: endOfLocalDay(now).toISOString(),
+        status: "active",
       };
-      state.currentHop = "roast";
-      writeState(cwd, state);
-
-      const eventBrief = state.mode === "event" ? readEventBrief(cwd) : null;
-      const durationMs =
-        new Date(state.shipped.at).getTime() - new Date(state.startedAt).getTime();
-
-      appendShipLog(
-        cwd,
-        [
-          `## ${state.id}`,
-          "",
-          `- Shipped: ${state.shipped.summary}`,
-          `- URL: ${state.shipped.url}`,
-          `- One-liner: ${state.idea.oneLiner}`,
-          `- Mode: ${state.mode}${state.event?.name ? ` (${state.event.name})` : ""}`,
-          `- Time from start to ship: ${fmtDuration(durationMs)}`,
-          `- Parked along the way: ${state.parked.length}`,
-          "",
-          shareTemplate(state),
-        ].join("\n"),
-      );
-
+      recordDailyShip(cwd, daily, args.url, args.summary, now);
+      const durationMs = now.getTime() - new Date(daily.startedAt).getTime();
       return text(
         [
-          `SHIPPED. ${fmtDuration(durationMs)} from start to a live URL. That is the whole point of the ritual.`,
+          `SHIPPED. ${fmtDuration(durationMs)} from hop to a live URL.`,
           "",
           `Logged to .habitat/ships.md.`,
+          cadenceLine(cwd),
           "",
-          eventBrief
-            ? `EVENT CHECK before the deadline: re-read the brief in .habitat/event.md and verify every ` +
-              `submission requirement is met (form submitted, repo linked, demo video, whatever the rules say). ` +
-              `A great build that misses a requirement scores zero.\n`
-            : "",
-          `One hop left: call roast. The honest read is where the learning lives.`,
+          `Optional last hop: call roast for the honest read.`,
           "",
-          clockLine(state),
+          shareTemplateDaily(daily),
         ].join("\n"),
       );
     },
@@ -633,20 +939,17 @@ export function createServer(cwd: string): McpServer {
       title: "Run the post-ship roast",
       description:
         "Returns the Habitat roast rubric for the host model to execute against the shipped artifact " +
-        "(and the event judging criteria in event mode). Closes the sprint.",
+        "(and the event judging criteria in event mode). Works after a daily ship or a sprint ship.",
       inputSchema: {},
     },
     async () => {
       const state = readState(cwd);
-      if (!state) return noSprint();
-      if (!state.shipped || !state.idea) {
-        return text(
-          `Nothing to roast yet. The roast only happens to things that exist at a URL. Ship first.`,
-        );
-      }
-      if (state.status !== "active") {
-        return text(`This sprint was already roasted and closed. Call ship_log for the record.`);
-      }
+      if (state && state.status === "active") {
+        if (!state.shipped || !state.idea) {
+          return text(
+            `Nothing to roast yet. The roast only happens to things that exist at a URL. Ship first.`,
+          );
+        }
 
       state.roastedAt = new Date().toISOString();
       state.status = "done";
@@ -655,6 +958,7 @@ export function createServer(cwd: string): McpServer {
       appendHistory(cwd, {
         id: state.id,
         mode: state.mode,
+        date: todayKey(),
         startedAt: state.startedAt,
         finishedAt: state.roastedAt,
         shipped: true,
@@ -689,6 +993,38 @@ export function createServer(cwd: string): McpServer {
           `The sprint is closed. ${SITE_URL} and ${COMMUNITY_URL} for the next Habitat night.`,
         ].join("\n"),
       );
+      }
+
+      const daily = rollDailyIfNeeded(cwd).daily;
+      if (!daily?.shipped) {
+        return text(
+          `Nothing to roast yet. The roast only happens to things that exist at a URL. Ship first, or call today and ship today's hop.`,
+        );
+      }
+
+      return text(
+        [
+          ROAST_RUBRIC,
+          "",
+          `CONTEXT FOR THE ROAST:`,
+          `- Today's hop: ${daily.intent}`,
+          `- Not today: ${daily.outOfScope.join("; ") || "nothing named"}`,
+          `- Shipped: ${daily.shipped.summary}`,
+          `- URL: ${daily.shipped.url}`,
+          `- Parked: ${
+            readBurrow(cwd).parked.length > 0
+              ? readBurrow(cwd).parked.map((item) => item.feature).join("; ")
+              : "nothing"
+          }`,
+          "",
+          `After delivering the roast, close with the ship log:`,
+          "",
+          shareTemplateDaily(daily),
+          "",
+          cadenceLine(cwd),
+          `Tomorrow, call today again. ${SITE_URL} if they want a room.`,
+        ].join("\n"),
+      );
     },
   );
 
@@ -698,37 +1034,43 @@ export function createServer(cwd: string): McpServer {
     {
       title: "Read the ship log",
       description:
-        "Past sprints in this folder: what shipped, when, and the share template for the latest ship.",
+        "Daily hops and sprints that made it to a URL, plus this week's count and the ship streak.",
       inputSchema: {},
     },
     async () => {
       const state = readState(cwd);
+      const daily = rollDailyIfNeeded(cwd).daily;
       const history = readHistory(cwd);
-      const shippedRuns = history.filter((h) => h.shipped);
+      const shippedRuns = history.filter((entry) => entry.shipped);
       const current =
         state && state.status === "active"
           ? `\nLive right now: sprint ${state.id}, ${hopLabel(state.currentHop)}. ${clockLine(state)}`
-          : "";
+          : daily && daily.status === "active"
+            ? `\nLive right now: today's hop. ${dailyClockLine(daily)}`
+            : "";
 
-      if (shippedRuns.length === 0 && !state?.shipped) {
+      if (shippedRuns.length === 0 && !state?.shipped && !daily?.shipped) {
         return text(
           `The ship log is empty. Zero ships so far in this burrow.${current}\n\n` +
-            `Fix that: call start_sprint. ${COMMUNITY_URL} if the builder wants to ship with other humans in the room.`,
+            `Fix that: call today. ${COMMUNITY_URL} if the builder wants to ship with other humans in the room.`,
         );
       }
 
       const lines: string[] = [
-        `Ship log: ${shippedRuns.length} shipped sprint${shippedRuns.length === 1 ? "" : "s"} in this folder.`,
+        `Ship log: ${shippedRuns.length} shipped hop${shippedRuns.length === 1 ? "" : "s"} in this folder.`,
+        cadenceLine(cwd),
         "",
       ];
       for (const run of shippedRuns.slice(-10)) {
         lines.push(
-          `- ${run.finishedAt.slice(0, 10)}: ${run.summary ?? run.oneLiner ?? run.id} (${run.url ?? "no url"})`,
+          `- ${run.finishedAt.slice(0, 10)} · ${run.mode}: ${run.summary ?? run.oneLiner ?? run.id} (${run.url ?? "no url"})`,
         );
       }
       const last = shippedRuns[shippedRuns.length - 1];
       if (state?.shipped) {
         lines.push("", shareTemplate(state));
+      } else if (daily?.shipped) {
+        lines.push("", shareTemplateDaily(daily));
       } else if (last?.url) {
         lines.push(
           "",
@@ -736,7 +1078,7 @@ export function createServer(cwd: string): McpServer {
         );
       }
       if (current) lines.push(current);
-      lines.push("", `Streak fuel: the next sprint is one start_sprint away.`);
+      lines.push("", `Next hop: call today. A Habitat night is still one start_sprint away.`);
       return text(lines.join("\n"));
     },
   );
