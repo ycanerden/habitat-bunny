@@ -4,9 +4,9 @@
 [![license](https://img.shields.io/github/license/ycanerden/habitat-bunny)](./LICENSE)
 [![habitat.md](https://img.shields.io/badge/habitat.md-always%20one%20hop%20ahead-5CAE30)](https://habitat.md)
 
-**The AI PM for your AI engineer.** The Habitat night, inside the editor you already build with.
+**Your founder coach, in the editor.** The Habitat night, inside the editor you already build with.
 
-Your agent is a brilliant engineer that never says no. The bunny is the PM: it grills the idea before you build it, locks the scope, keeps the deadline honest, and will not call it shipped until a stranger can click a URL.
+Your agent builds whatever you ask. The bunny is the coach in the room: it grills your idea before you build it, locks the scope, keeps the deadline honest, and will not call it shipped until a stranger can click a URL.
 
 Free · open source · no account · no backend · running in 2 min · nothing leaves your machine.
 
@@ -51,7 +51,7 @@ Built by [Habitat](https://habitat.md): 600+ people, 200+ MVPs, 8 cities, 4 coun
 
 AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever: one more feature, one more refactor, never a URL anyone can click.
 
-| Engineer, no PM | Engineer + bunny PM |
+| Agent, no coach | Agent + bunny in the room |
 | --- | --- |
 | ∞ weeks per project | 4 hours per sprint |
 | agent agrees with everything | idea grilled before you build |

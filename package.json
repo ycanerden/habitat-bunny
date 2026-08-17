@@ -1,7 +1,7 @@
 {
   "name": "habitat-bunny",
   "version": "0.1.0",
-  "description": "The AI PM for your AI engineer: a local MCP server that runs a timeboxed ship sprint inside Cursor, Claude Code, or Claude Desktop. Your agent builds; the bunny grills the idea, locks the scope, keeps the deadline, and keeps the ship log.",
+  "description": "Your founder coach, in the editor: a local MCP server that runs a timeboxed ship sprint inside Cursor, Claude Code, or Claude Desktop. Your agent builds; the bunny grills your idea, locks the scope, keeps the deadline, and keeps the ship log.",
   "license": "MIT",
   "author": "Habitat <ycanerden@gmail.com>",
   "type": "module",
