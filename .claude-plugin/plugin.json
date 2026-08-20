@@ -1,0 +1,31 @@
+{
+  "name": "habitat-bunny",
+  "version": "0.1.0",
+  "description": "The Habitat bunny as agent skills: grill, lock, park scope, refuse localhost, roast what shipped.",
+  "author": {
+    "name": "Habitat",
+    "url": "https://habitat.md"
+  },
+  "homepage": "https://habitat.md",
+  "repository": "https://github.com/ycanerden/habitat-bunny",
+  "license": "MIT",
+  "keywords": [
+    "habitat",
+    "ship",
+    "sprint",
+    "founder",
+    "hackathon",
+    "skills"
+  ],
+  "skills": [
+    "./skills/sprint/ask-bunny",
+    "./skills/sprint/start-sprint",
+    "./skills/sprint/setup-habitat",
+    "./skills/sprint/grilling",
+    "./skills/sprint/check-scope",
+    "./skills/sprint/ship",
+    "./skills/sprint/roast",
+    "./skills/daily/today",
+    "./skills/daily/pace"
+  ]
+}

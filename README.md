@@ -3,12 +3,46 @@
 [![npm](https://img.shields.io/npm/v/habitat-bunny)](https://www.npmjs.com/package/habitat-bunny)
 [![license](https://img.shields.io/github/license/ycanerden/habitat-bunny)](./LICENSE)
 [![habitat.md](https://img.shields.io/badge/habitat.md-always%20one%20hop%20ahead-5CAE30)](https://habitat.md)
+[![skills.sh](https://skills.sh/b/ycanerden/habitat-bunny)](https://skills.sh/ycanerden/habitat-bunny)
 
 The Habitat night, inside the editor you already build with.
 
 Your agent writes the code. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and will not call it shipped until a stranger can click a URL.
 
 No backend. No account. No API keys. Nothing leaves your machine.
+
+Two complementary pieces. **Skills** are the method (the grill, the hops, the roast). The **MCP** is the gate (it will refuse a vague ICP, a skipped hop, a localhost URL). Install skills first. Add the MCP if you want the no to be a tool, not a suggestion.
+
+The two skill routes are exclusive. The plugin is a managed bundle. skills.sh writes files you own and edit. Installing both leaves every skill twice: pick one. The MCP can sit next to either.
+
+### 1. Get the skills
+
+<details>
+<summary><strong>Claude Code</strong></summary>
+
+```bash
+/plugin marketplace add ycanerden/habitat-bunny
+/plugin install habitat-bunny
+```
+
+</details>
+
+<details>
+<summary><strong>Codex, Cursor, and other agents</strong></summary>
+
+```bash
+npx skills@latest add ycanerden/habitat-bunny
+```
+
+Pick the skills you want, and which coding agents to install them on. **The installer lets you choose which skills to take, so make sure `setup-habitat` is one of them.**
+
+</details>
+
+### 2. Run `/setup-habitat`
+
+Once per repo. It writes the burrow (`.habitat/`) and asks how you sprint.
+
+### 3. Optional: the MCP gate
 
 **Install in Cursor (one click):**
 [Add habitat-bunny](cursor://anysphere.cursor-deeplink/mcp/install?name=habitat-bunny&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImhhYml0YXQtYnVubnkiXX0=)
@@ -18,7 +52,7 @@ No backend. No account. No API keys. Nothing leaves your machine.
 claude mcp add habitat-bunny -- npx -y habitat-bunny
 ```
 
-Then say: `let's do a ship sprint`.
+Then say: `let's do a ship sprint`. Or type `/today` if you are already mid-build and lost.
 
 Built by [Habitat](https://habitat.md): 600+ people, 200+ MVPs, 8 cities, 4 countries. Hover the bunny on the site. It walks.
 
@@ -93,6 +127,41 @@ Delete the folder and the bunny forgets everything.
 ## Tools
 
 `start_sprint` · `lock_idea` · `sprint_status` · `check_scope` · `next_hop` · `ship` · `roast` · `ship_log`
+
+## Reference
+
+These split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them (e.g. `/start-sprint`). **Model-invoked** skills can be invoked by you or reached for automatically when the task fits. A user-invoked skill may invoke model-invoked skills, but never another user-invoked one.
+
+Unsure which hop? Type `/ask-bunny`.
+
+### Sprint
+
+The Habitat night ritual.
+
+**User-invoked**
+
+- **[ask-bunny](./skills/sprint/ask-bunny/SKILL.md)**: Ask which skill or flow fits. A router over the skills in this repo.
+- **[start-sprint](./skills/sprint/start-sprint/SKILL.md)**: Run a timeboxed ship sprint: lock, build, ship, roast.
+- **[setup-habitat](./skills/sprint/setup-habitat/SKILL.md)**: Write the burrow and set how this repo sprints. Run once per repo.
+
+**Model-invoked**
+
+- **[grilling](./skills/sprint/grilling/SKILL.md)**: One question at a time, no compliments, until the four lock gates pass.
+- **[check-scope](./skills/sprint/check-scope/SKILL.md)**: Park a mid-sprint feature idea in the backlog. It is not forgotten. It is not tonight.
+- **[ship](./skills/sprint/ship/SKILL.md)**: Record a live URL a stranger can click. localhost does not count.
+- **[roast](./skills/sprint/roast/SKILL.md)**: Honest read of what shipped vs what was promised, then one next validation move.
+
+### Daily
+
+One hop today.
+
+**User-invoked**
+
+- **[today](./skills/daily/today/SKILL.md)**: Lock one sentence for today and take it to a URL before you stop.
+
+**Model-invoked**
+
+- **[pace](./skills/daily/pace/SKILL.md)**: Read the clock and nudge the current hop. Reach when the conversation drifts or the builder goes quiet.
 
 ## Add your ship
 

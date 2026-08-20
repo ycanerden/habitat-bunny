@@ -1,0 +1,5 @@
+interface:
+  display_name: "Start sprint"
+  short_description: "Lock, build, ship, roast. One evening."
+policy:
+  allow_implicit_invocation: false

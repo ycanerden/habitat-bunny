@@ -1,0 +1,5 @@
+interface:
+  display_name: "Today"
+  short_description: "One sentence. One URL. Before you stop."
+policy:
+  allow_implicit_invocation: false

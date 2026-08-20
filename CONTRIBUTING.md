@@ -11,12 +11,27 @@ The most useful contribution is a shipped URL.
 
 That is the loop: people see real ships, they run a sprint, they add theirs.
 
+## Skills
+
+Skills live under `skills/`. The contract is in [AGENTS.md](./AGENTS.md). Short version:
+
+- Promoted buckets are `sprint/` and `daily/`. Each promoted skill needs a `SKILL.md`, `agents/openai.yaml`, a docs page at `docs/<bucket>/<name>.md`, a line in the bucket README, a line in the top-level README, and an entry in `.claude-plugin/plugin.json`.
+- User-invoked vs model-invoked: see [.agents/invocation.md](./.agents/invocation.md). Keep the frontmatter flag and the Codex `policy` in sync.
+- If you add, rename, or reroute a user-reachable skill, update [ask-bunny](./skills/sprint/ask-bunny/SKILL.md).
+- Install wording is copied from [.agents/install-block.md](./.agents/install-block.md). Do not invent a second command.
+- Gate logic (vague ICP, skipped hop, localhost) stays in `src/`. Skills may describe a gate. They are not the only copy of a reject.
+
+```bash
+node scripts/check-skills.mjs   # must print SKILLS OK
+```
+
 ## Code changes
 
 ```bash
 npm install
 npm run build
 npm run smoke   # must print SMOKE OK
+npm run check:skills
 ```
 
 Keep the server complementary: it never writes the builder's code, never calls an LLM, never needs an API key. If a change requires a backend, it does not belong here.

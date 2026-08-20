@@ -1,0 +1,23 @@
+{
+  "name": "habitat",
+  "owner": {
+    "name": "Habitat",
+    "url": "https://habitat.md"
+  },
+  "description": "The Habitat night, as an installable Claude Code plugin.",
+  "plugins": [
+    {
+      "name": "habitat-bunny",
+      "source": "./",
+      "description": "Grill, lock, park scope, refuse localhost, roast what shipped.",
+      "category": "productivity",
+      "keywords": [
+        "habitat",
+        "ship",
+        "sprint",
+        "founder",
+        "hackathon"
+      ]
+    }
+  ]
+}

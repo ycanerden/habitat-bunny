@@ -1,0 +1,3 @@
+interface:
+  display_name: "Pace"
+  short_description: "Relay the clock. Move the hop."
