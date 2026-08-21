@@ -5,11 +5,36 @@
 [![habitat.md](https://img.shields.io/badge/habitat.md-always%20one%20hop%20ahead-5CAE30)](https://habitat.md)
 [![skills.sh](https://skills.sh/b/ycanerden/habitat-bunny)](https://skills.sh/ycanerden/habitat-bunny)
 
-The Habitat night, inside the editor you already build with.
+**Your founder coach, in the editor.** The Habitat night, inside the editor you already build with.
 
-Your agent writes the code. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and will not call it shipped until a stranger can click a URL.
+Your agent builds whatever you ask. The bunny is the coach in the room: it grills your idea before you build it, locks the scope, keeps the deadline honest, and will not call it shipped until a stranger can click a URL.
 
-No backend. No account. No API keys. Nothing leaves your machine.
+Free · open source · no account · no backend · running in 2 min · nothing leaves your machine.
+
+```text
+❯ let's do a ship sprint
+  starting sprint · window: one evening · 4:00:00 on the clock
+
+  HOP 1/4 · LOCK
+  ? what problem, for whom? one sentence.
+  you  "a tool for creators"
+  ✗ rejected. "creators" is not an ICP. name 10 people you could DM this week.
+  you  "indie podcasters who edit in Descript"
+  ✓ locked: "auto-chapters for podcast episodes"
+  ✓ NOT building tonight: accounts, billing
+
+  HOP 2/4 · BUILD
+  ! scope check: "what if we add dark mode?"
+  → parked in .habitat/backlog.md · not tonight
+  ⏱ 1:12:03 remaining
+
+  HOP 3/4 · SHIP
+  ✗ localhost:3000 is not shipped. deploy it.
+  ✓ live at https://chapter-bunny.vercel.app
+
+  HOP 4/4 · ROAST
+  ✓ ship log written · paste it anywhere
+```
 
 Two complementary pieces. **Skills** are the method (the grill, the hops, the roast). The **MCP** is the gate (it will refuse a vague ICP, a skipped hop, a localhost URL). Install skills first. Add the MCP if you want the no to be a tool, not a suggestion.
 
@@ -60,7 +85,14 @@ Built by [Habitat](https://habitat.md): 600+ people, 200+ MVPs, 8 cities, 4 coun
 
 AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever: one more feature, one more refactor, never a URL anyone can click.
 
-At Habitat nights the magic was never the advice. It was the container: a clock, a locked scope, and a room waiting to see what you made. This package is that container.
+| Agent, no coach | Agent + bunny in the room |
+| --- | --- |
+| ∞ weeks per project | 4 hours per sprint |
+| agent agrees with everything | idea grilled before you build |
+| one more feature, one more refactor | scope locked, side quests parked |
+| never a URL anyone can click | localhost refused at the door |
+
+At Habitat nights the magic was never the advice. It was the container: a clock, a locked scope, and a room waiting to see what you made. This package is that container. 200+ MVPs, 600+ people, 8 cities, 4 countries.
 
 ## Why not a system prompt
 

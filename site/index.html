@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>habitat-bunny — Your founder coach, in the editor.</title>
+<meta name="description" content="Your agent builds whatever you ask. The bunny is the founder coach: a local MCP server that grills your idea, locks the scope, keeps the deadline, and won't call it shipped until a stranger can click a URL." />
+<meta property="og:title" content="habitat-bunny — Your founder coach, in the editor." />
+<meta property="og:description" content="Agents say yes to everything. A coach makes you ship. Free, open source, nothing leaves your machine." />
+<style>
+  :root {
+    --bg: #0c0e0b;
+    --panel: #12150f;
+    --panel-2: #171b13;
+    --border: #262b1f;
+    --text: #e8ecdf;
+    --dim: #9aa38c;
+    --faint: #5f6852;
+    --green: #5cae30;
+    --green-soft: #8fd162;
+    --red: #e06c5a;
+    --amber: #d9a743;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* nav */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(12,14,11,.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner { display: flex; align-items: center; gap: 20px; height: 56px; }
+  .logo { font-weight: 700; text-decoration: none; color: var(--text); }
+  .logo::before { content: "❯ "; color: var(--green); }
+  .nav-links { display: flex; gap: 18px; flex: 1; }
+  .nav-links a, .nav-right a.plain { color: var(--dim); text-decoration: none; font-size: 13px; }
+  .nav-links a::before { content: "--"; color: var(--faint); }
+  .nav-links a:hover { color: var(--text); }
+  .nav-right { display: flex; gap: 14px; align-items: center; }
+  .btn {
+    display: inline-block; text-decoration: none; font-size: 13px;
+    padding: 8px 16px; border: 1px solid var(--border); color: var(--text);
+    background: transparent; cursor: pointer; font-family: inherit;
+  }
+  .btn:hover { border-color: var(--dim); }
+  .btn.primary { background: var(--green); border-color: var(--green); color: #0b1206; font-weight: 700; }
+  .btn.primary:hover { background: var(--green-soft); border-color: var(--green-soft); }
+
+  /* hero */
+  .hero { padding: 88px 0 72px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  h1 { font-size: clamp(44px, 6vw, 72px); line-height: 1.05; letter-spacing: -1px; }
+  h1 .dot { color: var(--green); }
+  .sub { margin-top: 22px; color: var(--dim); max-width: 44ch; }
+  .sub strong { color: var(--text); }
+  .cta-row { margin-top: 30px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .cta-label { display: block; font-size: 11px; letter-spacing: 1px; color: var(--green); margin-bottom: 6px; }
+  .proof { margin-top: 18px; font-size: 13px; color: var(--faint); }
+  .proof a { color: var(--dim); }
+  .bunny { margin-top: 34px; color: var(--green); white-space: pre; font-size: 13px; line-height: 1.25; user-select: none; }
+
+  /* terminal */
+  .term {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.45);
+  }
+  .term-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--panel-2);
+    font-size: 12px; color: var(--dim);
+  }
+  .dotc { width: 10px; height: 10px; border-radius: 50%; }
+  .term-body { padding: 18px 18px 22px; font-size: 13px; line-height: 1.75; min-height: 430px; }
+  .term-body .l { white-space: pre-wrap; }
+  .t-cmd { color: var(--text); font-weight: 700; }
+  .t-cmd::before { content: "❯ "; color: var(--green); }
+  .t-dim { color: var(--faint); }
+  .t-hop { color: var(--amber); letter-spacing: 1px; }
+  .t-ok { color: var(--green-soft); }
+  .t-no { color: var(--red); }
+  .t-q { color: var(--dim); }
+  .t-you { color: var(--text); }
+  .t-you::before { content: "you  "; color: var(--faint); }
+  .cursor-block { display: inline-block; width: 8px; height: 15px; background: var(--green); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .cursor-block { animation: none; } }
+
+  /* sections */
+  section { padding: 72px 0; border-top: 1px solid var(--border); }
+  .cmd-h { font-size: 20px; margin-bottom: 6px; }
+  .cmd-h::before { content: "❯ "; color: var(--green); }
+  .cmd-h .flag { color: var(--green-soft); }
+  .kicker { font-size: 11px; letter-spacing: 2px; color: var(--faint); text-transform: uppercase; margin-bottom: 34px; }
+
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step { background: var(--panel); border: 1px solid var(--border); padding: 22px; }
+  .step .num { color: var(--green); font-size: 13px; }
+  .step h3 { margin: 8px 0 6px; font-size: 16px; }
+  .step p { color: var(--dim); font-size: 13px; }
+
+  .tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .tool { background: var(--panel); border: 1px solid var(--border); padding: 18px; }
+  .tool code { color: var(--green-soft); font-size: 13px; }
+  .tool p { color: var(--dim); font-size: 12.5px; margin-top: 6px; }
+  .tool .gate { display: inline-block; margin-top: 10px; font-size: 10px; letter-spacing: 1px; padding: 2px 8px; border: 1px solid var(--border); color: var(--faint); text-transform: uppercase; }
+  .tool .gate.hard { color: var(--red); border-color: rgba(224,108,90,.35); }
+
+  .bench { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .bench-card { background: var(--panel); border: 1px solid var(--border); padding: 30px; }
+  .bench-card.win { border-color: rgba(92,174,48,.5); }
+  .bench-card .big { font-size: 56px; line-height: 1; letter-spacing: -2px; }
+  .bench-card.win .big { color: var(--green-soft); }
+  .bench-card .unit { color: var(--dim); margin: 6px 0 20px; font-size: 13px; }
+  .bench-card ul { list-style: none; }
+  .bench-card li { color: var(--dim); font-size: 13px; padding: 4px 0; }
+  .bench-card li::before { content: "· "; color: var(--faint); }
+  .bench-card.win li::before { content: "✓ "; color: var(--green); }
+  .bench-tail { text-align: center; margin-top: 40px; }
+  .bench-tail .big { font-size: 44px; letter-spacing: -1px; }
+  .bench-tail .big em { color: var(--green-soft); font-style: normal; }
+  .bench-tail p { color: var(--faint); font-size: 13px; margin-top: 6px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 34px; }
+  .stat { background: var(--panel); border: 1px solid var(--border); padding: 22px; }
+  .stat .n { font-size: 34px; color: var(--green-soft); letter-spacing: -1px; }
+  .stat .d { color: var(--dim); font-size: 12.5px; margin-top: 4px; }
+  .case { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .case-block { border: 1px solid var(--border); padding: 20px; background: var(--panel); }
+  .case-block h4 { font-size: 11px; letter-spacing: 2px; color: var(--faint); margin-bottom: 10px; }
+  .case-block p { color: var(--dim); font-size: 13px; }
+  .wall-cta { margin-top: 30px; font-size: 13px; color: var(--dim); }
+  .wall-cta a { color: var(--green-soft); }
+
+  .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .tier { background: var(--panel); border: 1px solid var(--border); padding: 30px; }
+  .tier.hot { border-color: rgba(92,174,48,.5); }
+  .tier .tag { display: inline-block; font-size: 10px; letter-spacing: 1px; border: 1px solid var(--border); padding: 2px 8px; color: var(--faint); margin-left: 8px; vertical-align: middle; }
+  .tier .price { font-size: 40px; margin: 14px 0 4px; }
+  .tier .price small { font-size: 14px; color: var(--dim); }
+  .tier .blurb { color: var(--dim); font-size: 13px; margin-bottom: 18px; }
+  .tier ul { list-style: none; }
+  .tier li { color: var(--dim); font-size: 13px; padding: 4px 0; }
+  .tier li::before { content: "→ "; color: var(--green); }
+
+  .closer { text-align: center; padding: 96px 0; }
+  .closer h2 { font-size: clamp(30px, 4.5vw, 52px); letter-spacing: -1px; line-height: 1.15; }
+  .closer h2 span { color: var(--green-soft); }
+  .closer .cta-row { justify-content: center; }
+
+  footer { border-top: 1px solid var(--border); padding: 36px 0; color: var(--faint); font-size: 13px; }
+  .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .foot a { color: var(--dim); text-decoration: none; }
+  .foot a:hover { color: var(--text); }
+
+  .copy-hint { font-size: 11px; color: var(--faint); }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .steps, .tools, .stats { grid-template-columns: repeat(2, 1fr); }
+    .bench, .tiers, .case { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="logo" href="#">bunny</a>
+    <div class="nav-links">
+      <a href="#how">how it works</a>
+      <a href="#tools">tools</a>
+      <a href="#benchmark">benchmark</a>
+      <a href="#ships">ships</a>
+      <a href="#events">events</a>
+    </div>
+    <div class="nav-right">
+      <a class="plain" href="https://github.com/ycanerden/habitat-bunny" target="_blank" rel="noopener" style="text-decoration:none;">github ↗</a>
+      <button class="btn primary" data-copy="claude mcp add habitat-bunny -- npx -y habitat-bunny">install →</button>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap hero">
+  <div>
+    <h1>Your founder<br />coach<span class="dot">.</span></h1>
+    <p class="sub">Your agent builds whatever you ask. The bunny is the coach in the room: it <strong>grills your idea, locks the scope, keeps the deadline</strong> — and won't call it shipped until a stranger can click a URL.</p>
+    <div class="cta-row">
+      <div>
+        <span class="cta-label">CURSOR</span>
+        <a class="btn primary" href="cursor://anysphere.cursor-deeplink/mcp/install?name=habitat-bunny&amp;config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImhhYml0YXQtYnVubnkiXX0=">add to cursor</a>
+      </div>
+      <div>
+        <span class="cta-label">CLAUDE CODE</span>
+        <button class="btn" data-copy="claude mcp add habitat-bunny -- npx -y habitat-bunny">copy install command</button>
+      </div>
+    </div>
+    <p class="proof">free · open source · no account · running in 2 min · <a href="https://github.com/ycanerden/habitat-bunny/blob/main/SHIPS.md" target="_blank" rel="noopener">view ships on github ↗</a></p>
+    <div class="bunny" aria-hidden="true">(\_/)
+(o.o)   one hop
+(&gt; &lt;)   at a time</div>
+  </div>
+
+  <div class="term" aria-label="Demo of a habitat-bunny sprint">
+    <div class="term-bar">
+      <span class="dotc" style="background:#e06c5a"></span>
+      <span class="dotc" style="background:#d9a743"></span>
+      <span class="dotc" style="background:#5cae30"></span>
+      <span style="margin-left:8px">claude + habitat-bunny mcp</span>
+    </div>
+    <div class="term-body" id="term"></div>
+  </div>
+</header>
+
+<section id="how">
+  <div class="wrap">
+    <h2 class="cmd-h">bunny <span class="flag">--quickstart</span></h2>
+    <p class="kicker">Setup · one evening, four hops</p>
+    <div class="steps">
+      <div class="step">
+        <span class="num">01</span>
+        <h3>Lock</h3>
+        <p>One question at a time, no compliments. Vague ICP? Rejected. You cannot start building.</p>
+      </div>
+      <div class="step">
+        <span class="num">02</span>
+        <h3>Build</h3>
+        <p>Only the locked one-liner. Side quests get parked in the backlog. The clock keeps talking.</p>
+      </div>
+      <div class="step">
+        <span class="num">03</span>
+        <h3>Ship</h3>
+        <p>A live URL. localhost does not count. The bunny will tell you.</p>
+      </div>
+      <div class="step">
+        <span class="num">04</span>
+        <h3>Roast</h3>
+        <p>Honest read of shipped vs promised, then a ship log ready to paste anywhere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tools">
+  <div class="wrap">
+    <h2 class="cmd-h">bunny <span class="flag">--tools</span></h2>
+    <p class="kicker">MCP · 8 tools · state lives in .habitat/, nothing leaves your machine</p>
+    <div class="tools">
+      <div class="tool"><code>start_sprint</code><p>Opens the window. Default: one evening, 4 hours on the clock.</p><span class="gate">clock</span></div>
+      <div class="tool"><code>lock_idea</code><p>Four gates: specific problem, findable ICP, repeatable one-liner, two NOTs.</p><span class="gate hard">gate</span></div>
+      <div class="tool"><code>check_scope</code><p>New idea mid-build? Parked in backlog.md. Not forgotten, not tonight.</p><span class="gate hard">gate</span></div>
+      <div class="tool"><code>sprint_status</code><p>Time remaining, current hop, locked scope. The clock, out loud.</p><span class="gate">clock</span></div>
+      <div class="tool"><code>next_hop</code><p>Advances the sprint. Will not skip a hop, no matter how nicely you ask.</p><span class="gate hard">gate</span></div>
+      <div class="tool"><code>ship</code><p>Demands a URL a stranger can click. Refuses localhost.</p><span class="gate hard">gate</span></div>
+      <div class="tool"><code>roast</code><p>Shipped vs promised, scored honestly. In event mode: against the judging criteria.</p><span class="gate">verdict</span></div>
+      <div class="tool"><code>ship_log</code><p>The share object. Paste it in the group chat, the PR, the thread.</p><span class="gate">receipt</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="benchmark">
+  <div class="wrap">
+    <h2 class="cmd-h">bunny <span class="flag">--benchmark</span></h2>
+    <p class="kicker">Speed · agents say yes to everything. a coach makes you ship.</p>
+    <div class="bench">
+      <div class="bench-card">
+        <div class="big">∞</div>
+        <div class="unit">weeks per project · agent, no coach</div>
+        <ul>
+          <li>agent agrees with everything</li>
+          <li>one more feature</li>
+          <li>one more refactor</li>
+          <li>never a URL anyone can click</li>
+        </ul>
+      </div>
+      <div class="bench-card win">
+        <div class="big">4</div>
+        <div class="unit">hours per sprint · agent + bunny in the room</div>
+        <ul>
+          <li>idea grilled before you build</li>
+          <li>scope locked, side quests parked</li>
+          <li>clock that keeps talking</li>
+          <li>localhost refused at the door</li>
+        </ul>
+      </div>
+    </div>
+    <div class="bench-tail">
+      <div class="big">0 → <em>1, tonight</em></div>
+      <p>AI removed the barrier to building. The bunny removes the barrier to finishing.</p>
+    </div>
+  </div>
+</section>
+
+<section id="ships">
+  <div class="wrap">
+    <h2 class="cmd-h">bunny <span class="flag">--ships</span></h2>
+    <p class="kicker">Receipts · the container is proven, this package is that container</p>
+    <div class="stats">
+      <div class="stat"><div class="n">200+</div><div class="d">MVPs shipped at Habitat nights</div></div>
+      <div class="stat"><div class="n">600+</div><div class="d">people through the room</div></div>
+      <div class="stat"><div class="n">8</div><div class="d">cities, 4 countries</div></div>
+      <div class="stat"><div class="n">0</div><div class="d">backends, accounts, API keys</div></div>
+    </div>
+    <div class="case">
+      <div class="case-block">
+        <h4>The problem</h4>
+        <p>Agents are infinitely patient and infinitely agreeable, so they help you build forever — and ship never.</p>
+      </div>
+      <div class="case-block">
+        <h4>What worked</h4>
+        <p>The magic at Habitat nights was never the advice. It was the container: a clock, a locked scope, and a room waiting to see what you made.</p>
+      </div>
+      <div class="case-block">
+        <h4>The move</h4>
+        <p>We put the container inside Cursor and Claude Code. Same ritual: lock, build, ship, roast.</p>
+      </div>
+    </div>
+    <p class="wall-cta">The ship wall is public and starts empty on purpose. Run a sprint, open a PR with your log. <a href="https://github.com/ycanerden/habitat-bunny/blob/main/SHIPS.md" target="_blank" rel="noopener">be the first hop →</a></p>
+  </div>
+</section>
+
+<section id="events">
+  <div class="wrap">
+    <h2 class="cmd-h">bunny <span class="flag">--tiers</span></h2>
+    <p class="kicker">Solo for builders · Event mode for whole rooms</p>
+    <div class="tiers">
+      <div class="tier hot">
+        <strong>Solo</strong><span class="tag">free forever</span>
+        <div class="price">$0<small>/forever</small></div>
+        <p class="blurb">Your agent builds. The bunny coaches. No meter.</p>
+        <ul>
+          <li>all 8 tools, all future tools</li>
+          <li>no backend, no account, no API keys</li>
+          <li>state is plain files in .habitat/ — delete it, the bunny forgets</li>
+          <li>works in Cursor, Claude Code, Claude Desktop</li>
+          <li>MIT licensed</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <strong>Events</strong><span class="tag">hackathons</span>
+        <div class="price">1 line<small> per participant</small></div>
+        <p class="blurb">Run your whole hackathon on a tool everyone installs in one line.</p>
+        <ul>
+          <li>paste the brief: theme, rules, deadline, judging criteria</li>
+          <li>the clock becomes the real submission deadline</li>
+          <li>the grill checks fit against the theme</li>
+          <li>shipping checks the submission requirements</li>
+          <li>the roast scores against the actual judging criteria</li>
+        </ul>
+        <p style="margin-top:16px; font-size:13px;"><a href="mailto:ycanerden@gmail.com" style="color:var(--green-soft)">talk to us →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="closer">
+  <div class="wrap">
+    <h2>Lock. Build. Ship. Roast.<br /><span>One evening.</span></h2>
+    <div class="cta-row" style="margin-top:34px;">
+      <button class="btn primary" data-copy="claude mcp add habitat-bunny -- npx -y habitat-bunny">❯ copy install command</button>
+      <a class="btn" href="https://github.com/ycanerden/habitat-bunny" target="_blank" rel="noopener">star on github →</a>
+    </div>
+    <p class="proof" style="margin-top:20px;">then say: <strong style="color:var(--text)">"let's do a ship sprint"</strong></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>❯ habitat-bunny · MIT · one hop at a time</span>
+    <span>
+      <a href="https://habitat.md" target="_blank" rel="noopener">habitat.md</a> ·
+      <a href="https://lu.ma/habitat" target="_blank" rel="noopener">events</a> ·
+      <a href="https://www.npmjs.com/package/habitat-bunny" target="_blank" rel="noopener">npm</a> ·
+      <a href="https://github.com/ycanerden/habitat-bunny" target="_blank" rel="noopener">github</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  // copy-to-clipboard buttons
+  document.querySelectorAll("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy);
+        const prev = btn.textContent;
+        btn.textContent = "✓ copied";
+        setTimeout(() => { btn.textContent = prev; }, 1600);
+      } catch { /* clipboard blocked; ignore */ }
+    });
+  });
+
+  // hero terminal: replay of a real sprint
+  const SCRIPT = [
+    ["cmd", "let's do a ship sprint"],
+    ["dim", "starting sprint · window: one evening · 4:00:00 on the clock"],
+    ["gap", ""],
+    ["hop", "HOP 1/4 · LOCK"],
+    ["q",   "? what problem, for whom? one sentence."],
+    ["you", '"a tool for creators"'],
+    ["no",  '✗ rejected. "creators" is not an ICP. name 10 people you could DM this week.'],
+    ["you", '"indie podcasters who edit in Descript"'],
+    ["ok",  "✓ ICP accepted"],
+    ["ok",  '✓ locked: "auto-chapters for podcast episodes"'],
+    ["ok",  "✓ NOT building tonight: accounts, billing"],
+    ["gap", ""],
+    ["hop", "HOP 2/4 · BUILD"],
+    ["q",   '! scope check: "what if we add dark mode?"'],
+    ["dim", "→ parked in .habitat/backlog.md · not tonight"],
+    ["dim", "⏱ 1:12:03 remaining"],
+    ["gap", ""],
+    ["hop", "HOP 3/4 · SHIP"],
+    ["no",  "✗ localhost:3000 is not shipped. deploy it."],
+    ["ok",  "✓ live at https://chapter-bunny.vercel.app"],
+    ["gap", ""],
+    ["hop", "HOP 4/4 · ROAST"],
+    ["dim", "promised: auto-chapters · shipped: auto-chapters"],
+    ["ok",  "✓ ship log written · paste it anywhere"],
+  ];
+  const CLASSES = { cmd: "t-cmd", dim: "t-dim", hop: "t-hop", ok: "t-ok", no: "t-no", q: "t-q", you: "t-you", gap: "" };
+  const term = document.getElementById("term");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function renderAll() {
+    term.innerHTML = SCRIPT.map(([kind, text]) =>
+      kind === "gap" ? "<div class='l'>&nbsp;</div>" : `<div class="l ${CLASSES[kind]}"></div>`
+    ).join("");
+    const lines = term.querySelectorAll(".l");
+    SCRIPT.forEach(([kind, text], i) => { if (kind !== "gap") lines[i].textContent = text; });
+  }
+
+  async function play() {
+    term.innerHTML = "";
+    const caret = document.createElement("span");
+    caret.className = "cursor-block";
+    for (const [kind, text] of SCRIPT) {
+      const line = document.createElement("div");
+      line.className = "l " + (CLASSES[kind] || "");
+      term.appendChild(line);
+      term.appendChild(caret);
+      if (kind === "gap") {
+        line.innerHTML = "&nbsp;";
+        await sleep(200);
+        continue;
+      }
+      // typed lines for user/agent input, instant for output
+      if (kind === "cmd" || kind === "you") {
+        for (let i = 1; i <= text.length; i++) {
+          line.textContent = text.slice(0, i);
+          await sleep(24);
+        }
+        await sleep(350);
+      } else {
+        line.textContent = text;
+        await sleep(kind === "hop" ? 550 : 420);
+      }
+    }
+    await sleep(6000);
+    play(); // loop
+  }
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  if (reduced) { renderAll(); } else { play(); }
+</script>
+</body>
+</html>
