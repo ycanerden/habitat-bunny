@@ -23,7 +23,9 @@
     "founder",
     "habitat",
     "cursor",
-    "claude"
+    "claude",
+    "skills",
+    "agent-skills"
   ],
   "repository": {
     "type": "git",
@@ -37,7 +39,8 @@
     "build": "tsc -p tsconfig.json && node -e \"require('fs').chmodSync('dist/index.js', 0o755)\"",
     "dev": "tsc -p tsconfig.json --watch",
     "smoke": "node scripts/smoke.mjs",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "check:skills": "node scripts/check-skills.mjs",
+    "lint": "tsc -p tsconfig.json --noEmit && node scripts/check-skills.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.0",

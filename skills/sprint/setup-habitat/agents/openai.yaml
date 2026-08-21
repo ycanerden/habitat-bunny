@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Habitat"
+  short_description: "Create the .habitat burrow once per repo"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ask bunny"
+  short_description: "Which Habitat hop fits right now"
+policy:
+  allow_implicit_invocation: false

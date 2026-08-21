@@ -1,0 +1,3 @@
+interface:
+  display_name: "Ship"
+  short_description: "A public URL. localhost does not count."

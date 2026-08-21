@@ -24,6 +24,7 @@ Notes:
 
 ## 2. Directory listings
 
+- skills.sh: the repo is the catalog. After merge, confirm https://skills.sh/ycanerden/habitat-bunny lists the promoted skills.
 - Cursor MCP directory: submit at cursor.com/directory (Anysphere reviews submissions).
 - Smithery: smithery.ai, sign in with GitHub and add the server (stdio, `npx -y habitat-bunny`).
 - Glama and PulseMCP: auto-index public GitHub repos with MCP servers; make sure the repo (or a public mirror of `packages/mcp`) is discoverable, then submit manually at glama.ai/mcp/servers and pulsemcp.com/submit.
