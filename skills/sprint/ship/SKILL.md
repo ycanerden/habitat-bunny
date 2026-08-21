@@ -9,6 +9,8 @@ Shipped means a stranger can open a URL without the builder's laptop.
 
 Read [CHECKLIST.md](CHECKLIST.md). Then record.
 
+If the artifact, the pitch, or the page still names more than the locked one-liner, call the Skill tool with "picasso" first. Do not ship a kitchen sink.
+
 ## Refuses
 
 - Not a URL

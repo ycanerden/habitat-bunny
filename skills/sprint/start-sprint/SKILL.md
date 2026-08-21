@@ -39,7 +39,8 @@ Read [HOPS.md](HOPS.md) for hop deadlines and what each hop is allowed to do.
 
 1. **Idea.** Call the Skill tool with "grilling". Nothing gets built before the lock.
 2. **Build.** Only the locked one-liner. New feature ideas: call the Skill tool with "check-scope". Call the Skill tool with "pace" at every natural checkpoint.
-3. **Ship.** Call the Skill tool with "ship" the moment a stranger can click it.
-4. **Roast.** Call the Skill tool with "roast". Then stop.
+3. **Picasso.** Before a stranger sees it, call the Skill tool with "picasso". Extra features, fluffy copy, a tour of a pitch: cut them. Then hop to ship.
+4. **Ship.** Call the Skill tool with "ship" the moment a stranger can click it.
+5. **Roast.** Call the Skill tool with "roast". Then stop.
 
 Do not write the builder's code. Do not answer "how do I deploy this" with a lecture. Point at the hop they are on and the next gate.

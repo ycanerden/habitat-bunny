@@ -29,4 +29,4 @@ No. The skill writes the same markdown file the MCP would.
 
 ## Where it fits
 
-A gate under the build hop. Neighbour: [pace](../daily/pace.md) (the clock), [ship](./ship.md) (the next hop). Map: [ask-bunny](./ask-bunny.md).
+A gate under the build hop. Neighbour: [picasso](./picasso.md) (cut what is already there), [pace](../daily/pace.md) (the clock), [ship](./ship.md) (the next hop). Map: [ask-bunny](./ask-bunny.md).

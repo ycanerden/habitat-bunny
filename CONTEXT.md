@@ -40,11 +40,16 @@ A check the bunny (or the skill, if the MCP is not installed) will refuse to pas
 **Clock**:
 The remaining time in the current hop and in the sprint. The clock is the boss in the build hop.
 
+**Picasso**:
+An elimination pass. Cut product, pitch, or copy until only the core (the one-liner) remains. Not a polish. Not a new idea. The after must be shorter than the before.
+_Avoid_: simplify, cleanup, refactor (those add or rearrange; Picasso only removes)
+
 ## Relationships
 
 - A **Sprint** is a sequence of **Hops** under one **Clock**
 - A **Lock** produces a **One-liner**, an **ICP**, and an out-of-scope list
 - A **Parked** idea is not a **Hop**
+- **Picasso** turns extra features into **Parked** ideas or deletions; it does not invent a new **Lock**
 - A **Ship** is the only thing a **Roast** may talk about
 - The **Burrow** holds the **Sprint** the agent can read without the MCP
 

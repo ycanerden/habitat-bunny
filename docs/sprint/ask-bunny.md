@@ -8,7 +8,7 @@ The defining constraint: it is a router, not a hop. If you already know you want
 
 You invoke this by typing `/ask-bunny`, and the agent won't reach for it on its own.
 
-Reach for it when you are stuck at the door: sprint or today, event or solo, grill or just ship. If you already have a locked one-liner and a clock, you want [pace](../daily/pace.md), not this.
+Reach for it when you are stuck at the door: sprint or today, event or solo, grill or just ship. If the page is fat and you already have a lock, you want [picasso](./picasso.md). If you already have a locked one-liner and a clock, you want [pace](../daily/pace.md).
 
 ## The map, not the evening
 
@@ -25,7 +25,7 @@ Everything else is a gate the front doors pull in.
 ## Common questions
 
 **Do I need this every time?**
-No. It exists because no one remembers nine names. After one sprint you will reach for `/start-sprint` or `/today` directly.
+No. It exists because no one remembers the names. After one sprint you will reach for `/start-sprint` or `/today` directly.
 
 **Will the agent suggest it?**
 No. That is the point of a user-invoked router. If it auto-fired, it would interrupt the hop you are already on.

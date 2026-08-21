@@ -26,6 +26,6 @@ If a lock for today already exists, do not re-litigate it. New directions go thr
 
 Build only that sentence. Mid-build ideas: call the Skill tool with "check-scope". Drift: call the Skill tool with "pace".
 
-When the core flow works, call the Skill tool with "ship". Then call the Skill tool with "roast".
+When the core flow works, call the Skill tool with "picasso", then "ship", then "roast". Do not show a stranger the extra features or the fluffy sentence.
 
 If the MCP is connected, prefer its tools for the same gates. There may not be a `today` tool on older servers; `start_sprint` in solo mode with a short `hours` window is an honest fallback.

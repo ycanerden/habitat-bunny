@@ -37,4 +37,4 @@ No. The skill runs the ritual in prose and writes the same files. The MCP is the
 
 ## Where it fits
 
-The main chain: setup → start-sprint → grilling → build (check-scope, pace) → ship → roast. The router is [ask-bunny](./ask-bunny.md).
+The main chain: setup → start-sprint → grilling → build (check-scope, pace) → [picasso](./picasso.md) → ship → roast. The router is [ask-bunny](./ask-bunny.md).

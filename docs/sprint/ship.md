@@ -8,7 +8,7 @@ The defining constraint: localhost is not shipped. It is a rehearsal. A stranger
 
 Type `/ship`, or the agent reaches for it automatically when something is deployable, when you say you shipped, or when you offer localhost / a screenshot as the finish line.
 
-Reach for this when the core flow works end to end. If you are still adding features, you want [check-scope](./check-scope.md) or [pace](../daily/pace.md).
+Reach for this when the core flow works end to end. If the page or pitch still lists more than the one-liner, run [picasso](./picasso.md) first. If you are still adding features, you want [check-scope](./check-scope.md) or [pace](../daily/pace.md).
 
 ## Prerequisites
 

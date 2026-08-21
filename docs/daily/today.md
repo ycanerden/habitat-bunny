@@ -29,4 +29,4 @@ Do not re-litigate it. New ideas go through [check-scope](../sprint/check-scope.
 
 ## Where it fits
 
-Standalone on-ramp that still uses grilling, check-scope, ship, roast underneath. Map: [ask-bunny](../sprint/ask-bunny.md).
+Standalone on-ramp that still uses grilling, check-scope, [picasso](../sprint/picasso.md), ship, roast underneath. Map: [ask-bunny](../sprint/ask-bunny.md).
