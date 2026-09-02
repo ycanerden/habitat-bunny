@@ -1,0 +1,93 @@
+# habitat-bunny
+
+> The Habitat night, inside the editor you already build with. One skill gives your coding agent a clock, a locked one-liner, and a gate that refuses localhost. Four hops: lock, build, ship, roast. One evening. Free, MIT, local: no backend, no account, no API key, nothing leaves the machine.
+
+This file is written for an agent (Claude Code, Codex, Cursor, Gemini CLI, OpenCode, or anything that reads a SKILL.md). A human pasted a line like `set up habitat-bunny — github.com/ycanerden/habitat-bunny/blob/main/llms.txt` into you. Read this whole file, then act.
+
+## Asked to "set up habitat-bunny"?
+
+Finish the setup, then report it as a doorway, not an install log.
+
+1. **Pick one skill route. Never install both.** The plugin is a managed bundle; skills.sh writes files the human owns and edits. Installing both leaves every skill twice.
+
+   - If the host is **Claude Code**: slash commands are typed by the human, not run by you. Show these two lines and ask them to type them:
+
+     ```bash
+     /plugin marketplace add ycanerden/habitat-bunny
+     /plugin install habitat-bunny
+     ```
+
+   - If the host is **Codex, Cursor, Gemini CLI, OpenCode, or another agent**: run
+
+     ```bash
+     npx skills@latest add ycanerden/habitat-bunny
+     ```
+
+     The installer lets the human choose which skills to take and which agents to install them on. Make sure `setup-habitat` is one of them. If you are running non-interactively, install the whole set.
+
+2. **Run `/setup-habitat` once in this repo.** It writes the burrow (`.habitat/`) and asks how this repo sprints. If the skill is not yet loaded in this session, tell the human to type `/setup-habitat` after the install finishes.
+
+3. **Offer the MCP gate. Do not install it silently.** The skills are the method. The MCP is the gate: it will refuse a vague ICP, a skipped hop, a localhost URL, as a tool result rather than a suggestion. It sits next to either skill route. Ask, and if the human says yes:
+
+   ```bash
+   # Claude Code
+   claude mcp add habitat-bunny -- npx -y habitat-bunny
+   ```
+
+   Cursor / Claude Desktop, in `mcp.json`:
+
+   ```json
+   {
+     "mcpServers": {
+       "habitat-bunny": {
+         "command": "npx",
+         "args": ["-y", "habitat-bunny"]
+       }
+     }
+   }
+   ```
+
+   Requires Node 20+. The server runs on stdio, keeps state in `.habitat/`, never calls an LLM, never needs a key.
+
+4. **Report the outcome as a doorway.** One short paragraph: which route was installed, whether the burrow exists, whether the gate is connected. Then offer exactly three things to do next, in this shape:
+
+   - "Say **let's do a ship sprint** and I will start the clock. Solo, team, or event."
+   - "Type **/today** if you are already mid-build and lost. One sentence, then a URL before you stop."
+   - "At a hackathon? Say **we're at an event** and paste the brief. The clock becomes the deadline, the roast scores against the judging criteria."
+
+Do not start building anything. The bunny paces; the human decides when the clock starts.
+
+## What you get
+
+**Skills** (the method). User-invoked skills are reachable only when the human types them. Model-invoked skills you may reach for when the task fits.
+
+- `/ask-bunny` (user): which skill or flow fits.
+- `/start-sprint` (user): the full evening. Lock, build, ship, roast. Solo, team, or event.
+- `/setup-habitat` (user): run once per repo. Writes `.habitat/`.
+- `/today` (user): one hop, no evening container. One sentence to a URL.
+- `grilling` (model): one question at a time, no compliments, until four gates pass: a specific problem, an ICP the builder can find 10 of this week, a one-liner a friend can repeat, at least two things not being built tonight.
+- `check-scope` (model): park a mid-sprint feature in `.habitat/backlog.md`. Not forgotten. Not tonight.
+- `picasso` (model): cut product, pitch, or copy until only the core remains.
+- `ship` (model): record a live URL a stranger can click. localhost does not count.
+- `roast` (model): promise vs artifact, weakest dimension, one next validation move.
+- `pace` (model): read the clock and nudge the current hop when the conversation drifts.
+
+**MCP tools** (the gate, optional): `start_sprint` · `lock_idea` · `sprint_status` · `check_scope` · `next_hop` · `ship` · `roast` · `ship_log`. When the MCP is connected, prefer its tools as the gate; the skills still run the method.
+
+**The burrow** `.habitat/`: `sprint.md`, `backlog.md`, `ships.md`, `event.md`, plus `state.json` and `history.json`. Human-readable. Delete the folder and the bunny forgets everything.
+
+## Rules while the bunny is around
+
+- You build. The bunny paces. Never ask the bunny technical questions.
+- Any new feature idea mid-build goes through `check-scope` before you write a line of it. Default answer: parked.
+- A ship is a URL a stranger can click. `localhost`, `127.0.0.1`, and `*.local` are refused.
+- Relay the bunny's messages in the bunny's voice: warm, clear, direct, short sentences, no compliments during the grill. Signature line when useful: "one hop at a time."
+
+## Links
+
+- Repo: https://github.com/ycanerden/habitat-bunny
+- npm: https://www.npmjs.com/package/habitat-bunny
+- Skills catalog: https://github.com/ycanerden/habitat-bunny/tree/main/skills
+- Docs: https://github.com/ycanerden/habitat-bunny/tree/main/docs
+- Ship wall (add yours by PR): https://github.com/ycanerden/habitat-bunny/blob/main/SHIPS.md
+- Habitat: https://habitat.md · events: https://lu.ma/habitat

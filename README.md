@@ -5,7 +5,7 @@
 [![habitat.md](https://img.shields.io/badge/habitat.md-always%20one%20hop%20ahead-5CAE30)](https://habitat.md)
 [![skills.sh](https://skills.sh/b/ycanerden/habitat-bunny)](https://skills.sh/ycanerden/habitat-bunny)
 
-The Habitat night, inside the editor you already build with.
+**Claude Code for shipping tonight.** Also Codex, Cursor, Gemini CLI, OpenCode: any agent that reads a SKILL.md. The Habitat night, inside the editor you already build with.
 
 Your agent writes the code. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and will not call it shipped until a stranger can click a URL.
 
@@ -14,6 +14,14 @@ No backend. No account. No API keys. Nothing leaves your machine.
 Two complementary pieces. **Skills** are the method (the grill, the hops, the roast). The **MCP** is the gate (it will refuse a vague ICP, a skipped hop, a localhost URL). Install skills first. Add the MCP if you want the no to be a tool, not a suggestion.
 
 The two skill routes are exclusive. The plugin is a managed bundle. skills.sh writes files you own and edit. Installing both leaves every skill twice: pick one. The MCP can sit next to either.
+
+### 0. Or paste this into your agent
+
+```text
+set up habitat-bunny — github.com/ycanerden/habitat-bunny/blob/main/llms.txt
+```
+
+The agent reads [`llms.txt`](./llms.txt), picks the skill route for your editor, runs `/setup-habitat`, asks before adding the MCP gate, and hands you back three things to try. Steps 1 to 3 below are what it does by hand.
 
 ### 1. Get the skills
 
