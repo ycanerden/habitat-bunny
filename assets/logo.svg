@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Habitat bunny">
+  <rect width="128" height="128" rx="28" fill="#5CAE30"/>
+  <g fill="#F4F7F0">
+    <ellipse cx="46" cy="34" rx="11" ry="28" transform="rotate(-18 46 34)"/>
+    <ellipse cx="82" cy="34" rx="11" ry="28" transform="rotate(18 82 34)"/>
+    <ellipse cx="46" cy="32" rx="5" ry="18" transform="rotate(-18 46 32)" fill="#3E7A20"/>
+    <ellipse cx="82" cy="32" rx="5" ry="18" transform="rotate(18 82 32)" fill="#3E7A20"/>
+    <circle cx="64" cy="78" r="32"/>
+    <ellipse cx="64" cy="108" rx="22" ry="12"/>
+    <circle cx="54" cy="74" r="4" fill="#1A2E12"/>
+    <circle cx="74" cy="74" r="4" fill="#1A2E12"/>
+    <ellipse cx="64" cy="86" rx="5" ry="3.5" fill="#1A2E12"/>
+  </g>
+</svg>

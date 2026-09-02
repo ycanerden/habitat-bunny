@@ -6,9 +6,9 @@ Skills live in bucket folders under `skills/`:
 - `in-progress/`: beta, public on purpose, feedback wanted, not shipped in the plugin
 - `deprecated/`: no longer used
 
-Every skill in `sprint/` or `daily/` (the **promoted** buckets) must have a reference in the top-level `README.md` and an entry in `.claude-plugin/plugin.json`'s `skills` array. The Claude Code plugin ships exactly the promoted set. Skills in `misc/`, `in-progress/`, and `deprecated/` must not appear in either.
+Every skill in `sprint/` or `daily/` (the **promoted** buckets) must have a reference in the top-level `README.md` and the same path in `.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.codex-plugin/plugin.json`, and `.grok-plugin/plugin.json`. The plugin manifests ship exactly the promoted set. Skills in `misc/`, `in-progress/`, and `deprecated/` must not appear in any of them.
 
-Install commands are copied verbatim from [.agents/install-block.md](./.agents/install-block.md). `.claude-plugin/marketplace.json` makes the repo its own single-plugin marketplace. Run `claude plugin validate . --strict` after touching either manifest. Why the MCP server and the skills sit side by side lives in [.agents/adr/0001-skills-sit-beside-the-mcp.md](./.agents/adr/0001-skills-sit-beside-the-mcp.md).
+Install commands are copied verbatim from [.agents/install-block.md](./.agents/install-block.md). `.claude-plugin/marketplace.json` makes the repo its own single-plugin marketplace. `.cursor-plugin/`, `.codex-plugin/`, and `.grok-plugin/` are the listing manifests for those hosts; they must list the same promoted skills. Run `claude plugin validate . --strict` after touching a Claude manifest. Why the MCP server and the skills sit side by side lives in [.agents/adr/0001-skills-sit-beside-the-mcp.md](./.agents/adr/0001-skills-sit-beside-the-mcp.md).
 
 Each skill entry in the top-level `README.md` must link the skill name to its `SKILL.md`.
 

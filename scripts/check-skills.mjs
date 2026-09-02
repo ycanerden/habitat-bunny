@@ -31,6 +31,61 @@ const pluginSkills = new Set(plugin.skills);
 const readme = read("README.md");
 const errors = [];
 
+const siblingManifests = [
+  ".cursor-plugin/plugin.json",
+  ".codex-plugin/plugin.json",
+  ".grok-plugin/plugin.json",
+];
+
+function skillSet(value) {
+  if (!Array.isArray(value)) return null;
+  return new Set(value);
+}
+
+for (const rel of siblingManifests) {
+  if (!exists(rel)) {
+    errors.push(`missing ${rel}`);
+    continue;
+  }
+  const manifest = JSON.parse(read(rel));
+  const skills = skillSet(manifest.skills);
+  if (!skills) {
+    errors.push(`${rel} skills must be an array of promoted skill paths`);
+    continue;
+  }
+  for (const s of pluginSkills) {
+    if (!skills.has(s)) errors.push(`${rel} missing ${s}`);
+  }
+  for (const s of skills) {
+    if (!pluginSkills.has(s)) errors.push(`${rel} extra skill ${s}`);
+  }
+}
+
+if (!exists(".mcp.json")) {
+  errors.push("missing .mcp.json");
+} else {
+  const mcp = JSON.parse(read(".mcp.json"));
+  const server = mcp?.mcpServers?.["habitat-bunny"];
+  const args = server?.args;
+  if (server?.command !== "npx" || !Array.isArray(args) || !args.includes("habitat-bunny")) {
+    errors.push(".mcp.json must run npx habitat-bunny");
+  }
+}
+
+if (!exists("assets/logo.svg")) {
+  errors.push("missing assets/logo.svg");
+}
+
+if (!exists(".agents/plugins/marketplace.json")) {
+  errors.push("missing .agents/plugins/marketplace.json");
+} else {
+  const agentsMarket = JSON.parse(read(".agents/plugins/marketplace.json"));
+  const names = (agentsMarket.plugins ?? []).map((p) => p.name);
+  if (!names.includes("habitat-bunny")) {
+    errors.push(".agents/plugins/marketplace.json missing habitat-bunny");
+  }
+}
+
 for (const bucket of promoted) {
   const bucketReadme = read(`skills/${bucket}/README.md`);
   for (const name of skillDirs(bucket)) {

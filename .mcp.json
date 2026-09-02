@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "habitat-bunny": {
+      "command": "npx",
+      "args": ["-y", "habitat-bunny"]
+    }
+  }
+}

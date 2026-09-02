@@ -10,6 +10,7 @@
       "name": "habitat-bunny",
       "source": "./",
       "description": "Grill, lock, park scope, refuse localhost, roast what shipped.",
+      "homepage": "https://habitat.md",
       "category": "productivity",
       "keywords": [
         "habitat",
