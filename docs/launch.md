@@ -28,7 +28,11 @@ Notes:
 
 ## 2. Deploy the site (you)
 
-`site/index.html` is one self-contained file: no build, no framework, fonts from Google Fonts. Deploy the `site/` folder anywhere static.
+`site/index.html` is one self-contained file: no build, no framework, Inter from Google Fonts. It uses habitat.md's design system (the `:root` tokens, `.display`, `.mention`, `.marker`, `.paper`, list rows, the green band with the wave divider, the dark closing band, and the bunny walker on logo hover) so it reads as a page of the same site.
+
+`site/brand/` and `site/images/mascot/` are copies of Habitat's own brand assets from habitat.md (the logomark, the mascot, the three doodle bunnies, the hills and burrow images). They are Habitat-owned brand assets, not MIT-licensed code: keep them for Habitat properties only, and if the originals change on habitat.md, copy them over again rather than editing here.
+
+Deploy the `site/` folder anywhere static.
 
 ```bash
 npx vercel deploy site --prod        # e.g. bunny.habitat.md
