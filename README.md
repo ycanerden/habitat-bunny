@@ -156,7 +156,7 @@ The Habitat night ritual.
 
 - **[grilling](./skills/sprint/grilling/SKILL.md)**: One question at a time, no compliments, until the four lock gates pass.
 - **[check-scope](./skills/sprint/check-scope/SKILL.md)**: Park a mid-sprint feature idea in the backlog. It is not forgotten. It is not tonight.
-- **[picasso](./skills/sprint/picasso/SKILL.md)**: Cut a product, a pitch, or a piece of copy until only the core remains.
+- **[picasso](./skills/sprint/picasso/SKILL.md)**: Delete whatever can go without losing meaning. A sentence, a plan, a page, a product. Named after *Le Taureau*.
 - **[ship](./skills/sprint/ship/SKILL.md)**: Record a live URL a stranger can click. localhost does not count.
 - **[roast](./skills/sprint/roast/SKILL.md)**: Honest read of what shipped vs what was promised, then one next validation move.
 

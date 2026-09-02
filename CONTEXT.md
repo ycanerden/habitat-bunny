@@ -41,8 +41,8 @@ A check the bunny (or the skill, if the MCP is not installed) will refuse to pas
 The remaining time in the current hop and in the sprint. The clock is the boss in the build hop.
 
 **Picasso**:
-An elimination pass. Cut product, pitch, or copy until only the core (the one-liner) remains. Not a polish. Not a new idea. The after must be shorter than the before.
-_Avoid_: simplify, cleanup, refactor (those add or rearrange; Picasso only removes)
+An elimination pass, named after Picasso's *Le Taureau* (eleven states of a bull, each with less, still the bull). One test: take a piece out; if the meaning survives, it stays out. Works at every scale: a word in a sentence, a step in a plan, a feature in a product. Not a polish. Not a new idea. The after must be shorter than the before.
+_Avoid_: simplify, cleanup, refactor, reword (those add or rearrange; Picasso only removes)
 
 ## Relationships
 

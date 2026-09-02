@@ -18,7 +18,7 @@ The Habitat night. You have an evening (or a deadline) and you want a URL a stra
 2. **`/start-sprint`** starts the clock. Solo, team, or event. Event mode needs the brief before the clock starts.
 3. Call the Skill tool with "grilling". The idea hop does not close until four gates pass. Then lock.
 4. Build only the locked one-liner. Any new feature idea mid-build: call the Skill tool with "check-scope".
-5. Before a stranger sees it (launch, demo, first DM, or landing copy): call the Skill tool with "picasso". Cut until the artifact is only the one-liner.
+5. Before a stranger sees it (launch, demo, first DM, or landing copy): call the Skill tool with "picasso". Delete until the artifact is only the one-liner.
 6. When the core flow works, call the Skill tool with "ship". No URL, no next hop. localhost does not count.
 7. Call the Skill tool with "roast". The sprint ends on the honest read, not on the deploy.
 
@@ -38,7 +38,7 @@ Model-invoked gates that the flows above pull in. Reach for them directly when t
 
 - **grilling**: one question at a time until the lock is honest
 - **check-scope**: park the shiny idea
-- **picasso**: cut product, pitch, or copy until only the core remains
+- **picasso**: delete whatever can go without losing meaning. A sentence, a plan, a page, a product. Also standalone: "picasso this" on any text
 - **ship**: refuse anything a stranger cannot open
 - **roast**: promise vs artifact
 - **pace**: the clock is talking, relay it

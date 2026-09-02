@@ -67,7 +67,7 @@ Do not start building anything. The bunny paces; the human decides when the cloc
 - `/today` (user): one hop, no evening container. One sentence to a URL.
 - `grilling` (model): one question at a time, no compliments, until four gates pass: a specific problem, an ICP the builder can find 10 of this week, a one-liner a friend can repeat, at least two things not being built tonight.
 - `check-scope` (model): park a mid-sprint feature in `.habitat/backlog.md`. Not forgotten. Not tonight.
-- `picasso` (model): cut product, pitch, or copy until only the core remains.
+- `picasso` (model): delete whatever can go without losing meaning. One test, any scale: a word in a sentence, a step in a plan, a feature in a product. Shows the cut as numbered states, like Picasso's *Le Taureau*.
 - `ship` (model): record a live URL a stranger can click. localhost does not count.
 - `roast` (model): promise vs artifact, weakest dimension, one next validation move.
 - `pace` (model): read the clock and nudge the current hop when the conversation drifts.
