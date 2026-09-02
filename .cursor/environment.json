@@ -1,0 +1,4 @@
+{
+  "name": "habitat-bunny",
+  "install": "npm ci && npm run build"
+}
