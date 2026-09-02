@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code for shipping tonight — one skill, four hops, one URL | habitat-bunny</title>
+<meta name="description" content="Give Claude Code, Codex, Cursor or any agent a clock, a locked scope, and a gate that refuses localhost. Lock, build, ship, roast: one evening. Free, open source, nothing leaves your machine.">
+<meta property="og:title" content="Claude Code for shipping tonight — habitat-bunny">
+<meta property="og:description" content="One skill gives your agent the Habitat night: grill the idea, lock the scope, keep the clock, refuse localhost, roast what shipped. Free, MIT, local.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#FDFCFB">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101010'/%3E%3Ccircle cx='12' cy='19' r='5' fill='%23fff'/%3E%3Ccircle cx='20' cy='19' r='5' fill='%23fff'/%3E%3Crect x='9' y='5' width='4' height='12' rx='2' fill='%235CAE30'/%3E%3Crect x='19' y='5' width='4' height='12' rx='2' fill='%235CAE30'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FDFCFB;--card:#F5F4F1;--line:#E9E7E2;--ink:#101010;--muted:#8A8885;
+  --green:#3E8E22;--green-bright:#5CAE30;--green-soft:rgba(92,174,48,.14);--red:#C0362F;--amber:#B7791F;
+  --dark:#1B1B1A;--dark-2:#242422;--term:#E8E8E8;--cyan:#6FCDF0;--term-green:#7FDCAE;--term-reply:#45E39E;--term-red:#F08A82;--term-muted:#8C8C88;
+  --display:"Inter Tight",system-ui,sans-serif;--text:"Inter",system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:16px;--shadow:0 1px 2px rgba(16,16,16,.04),0 12px 40px -12px rgba(16,16,16,.14),0 40px 80px -40px rgba(16,16,16,.12);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--text);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+img,svg{display:block}
+::selection{background:var(--green-soft)}
+.mono{font-family:var(--mono)}
+.hl{color:var(--green);font-weight:600}
+.wrap{width:min(1120px,calc(100% - 40px));margin:0 auto}
+section{padding:110px 0}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h2{font-size:clamp(30px,4.6vw,46px);font-weight:500;letter-spacing:-.025em;line-height:1.08}
+.lede{color:var(--muted);font-size:17px;max-width:56ch;margin:16px auto 0}
+.center{text-align:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--muted);text-transform:none}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:999px;font-size:14px;font-weight:500;line-height:1;border:1px solid transparent;transition:transform .15s ease,background .15s ease,border-color .15s ease;cursor:pointer;white-space:nowrap}
+.pill:active{transform:translateY(1px)}
+.pill.solid{background:var(--ink);color:#fff}
+.pill.solid:hover{background:#2a2a28}
+.pill.ghost{background:var(--bg);color:var(--ink);border-color:var(--line)}
+.pill.ghost:hover{border-color:#cfccc5}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* nav */
+nav{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(253,252,251,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .2s}
+nav.scrolled{border-bottom-color:var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:500;font-size:14.5px}
+.brand .mark{width:26px;height:26px;border-radius:7px;background:var(--ink);display:grid;place-items:center}
+.brand .crumb{color:var(--muted);font-weight:400}
+.brand .crumb b{color:var(--ink);font-weight:500}
+.navlinks{display:flex;align-items:center;gap:22px;font-size:14px;color:var(--muted)}
+.navlinks a:hover{color:var(--ink)}
+.navlinks .pill{padding:8px 16px}
+@media (max-width:760px){.navlinks a:not(.pill){display:none}}
+
+/* hero */
+.hero{padding:160px 0 56px;text-align:center}
+.hero .eyebrow{display:inline-flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:#fff}
+.hero .eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--green-bright);display:inline-block}
+h1{font-size:clamp(42px,7vw,78px);font-weight:500;letter-spacing:-.03em;line-height:1.04;max-width:16ch;margin:26px auto 0}
+.hw{display:inline-block;opacity:0;transform:translateY(.35em);animation:pop .55s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--i)*320ms)}
+@keyframes pop{to{opacity:1;transform:none}}
+.slot{display:inline-grid;grid-auto-flow:column;position:relative;vertical-align:baseline;text-align:left;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.slot>span{grid-area:1/1;justify-self:start;width:max-content;white-space:nowrap;display:inline-flex;align-items:center;gap:.22em;opacity:0;transform:translateY(.4em);transition:opacity .45s ease,transform .45s cubic-bezier(.2,.7,.2,1)}
+.slot>span.on{opacity:1;transform:none}
+.slot>span.off{opacity:0;transform:translateY(-.4em)}
+.agent-badge{width:.78em;height:.78em;border-radius:.18em;background:var(--dark);color:var(--cyan);font-family:var(--mono);font-size:.5em;display:inline-grid;place-items:center;transform:translateY(-.06em);font-weight:500}
+.sub{color:var(--muted);font-size:18px;max-width:58ch;margin:26px auto 0}
+.sub b{color:var(--ink);font-weight:600}
+.ctas{display:flex;gap:10px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.works{margin-top:36px;font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:6px 14px;justify-content:center;flex-wrap:wrap}
+.works span::before{content:"›";color:var(--green);margin-right:6px}
+
+/* film */
+.film-wrap{padding:20px 0 110px}
+.film{width:min(880px,100%);margin:0 auto;border-radius:20px;overflow:hidden;background:#fff}
+.strip{background:var(--dark);color:var(--term);font-family:var(--mono);font-size:13.5px;height:52px;display:flex;align-items:center;gap:10px;padding:0 18px;white-space:nowrap;overflow:hidden}
+.strip .p{color:var(--cyan)}
+.strip .cur{width:9px;height:19px;background:var(--cyan);display:inline-block;animation:blink 1s steps(1) infinite;flex:none}
+@keyframes blink{50%{opacity:0}}
+.strip .reply{margin-left:auto;color:var(--term-reply);opacity:0;transition:opacity .3s;overflow:hidden;text-overflow:ellipsis}
+.strip .reply.on{opacity:1}
+.film-body{display:grid;grid-template-columns:1fr 250px;min-height:330px}
+.film table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+.film th.c0{width:44px}.film th.c1{width:64px}.film th.c3{width:176px}
+.film th{font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.04em;color:var(--muted);text-align:left;padding:14px 14px 10px;border-bottom:1px solid var(--line)}
+.film th:first-child,.film td:first-child{padding-left:20px;color:var(--muted);font-family:var(--mono);font-size:11px}
+.film td{padding:0 14px;height:36px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.film td.empty{background:repeating-linear-gradient(-45deg,transparent 0 6px,var(--card) 6px 7px);opacity:.7}
+.film tr.in td{background:none;opacity:1}
+.film tr td>span{display:block;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+.film tr.in td>span{opacity:1;transform:none}
+.hop{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.gate{font-family:var(--mono);font-size:11.5px;font-weight:500}
+.gate.ok{color:var(--green)}.gate.no{color:var(--red)}.gate.park{color:var(--amber)}
+.board{border-left:1px solid var(--line);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:8px}
+.board .bt{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.03em;margin-bottom:4px}
+.brow{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:11.5px;transition:box-shadow .3s,border-color .3s,opacity .3s}
+.brow .n{font-weight:500}
+.brow .t{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right}
+.brow .s{grid-column:1/-1;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.brow.now{border-color:var(--green-bright);box-shadow:0 0 0 3px var(--green-soft)}
+.brow.now .s{color:var(--green)}
+.brow.done{opacity:.55}
+.brow.done .s{color:var(--green)}
+.badge{margin-top:auto;font-family:var(--mono);font-size:10px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:6px 8px;text-align:center}
+.film-foot{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:#FBFAF8;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.meter{color:var(--green);font-weight:500;font-variant-numeric:tabular-nums;font-size:13px}
+.caption{text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:18px}
+@media (max-width:760px){.film-body{grid-template-columns:1fr}.board{border-left:0;border-top:1px solid var(--line)}.film th:nth-child(2),.film td:nth-child(2){display:none}.film th.c0{width:30px}.film th.c3{width:150px}.film td,.film th{padding-left:10px;padding-right:10px}.film th:first-child,.film td:first-child{padding-left:12px}}
+
+/* use cases */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+.uc{overflow:hidden;display:flex;flex-direction:column;min-height:250px}
+.uc .strip{height:44px;font-size:12.5px;padding:0 14px}
+.uc .strip .cur{height:16px;width:8px}
+.uc-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:7px;font-size:12.5px}
+.uc-foot{font-family:var(--mono);font-size:10.5px;color:var(--muted);padding:10px 16px;border-top:1px solid var(--line);background:#FBFAF8}
+.st{opacity:0;transform:translateY(5px)}
+.uc.on .st{animation:stepin 5.6s cubic-bezier(.2,.7,.2,1) infinite;animation-delay:calc(var(--d)*1ms)}
+@keyframes stepin{0%{opacity:0;transform:translateY(5px)}6%{opacity:1;transform:none}88%{opacity:1;transform:none}96%,100%{opacity:0;transform:translateY(-3px)}}
+.q{background:var(--card);border-radius:10px;padding:8px 10px}
+.q b{font-weight:500}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:#fff}
+.tag.ok{color:var(--green);border-color:rgba(92,174,48,.4);background:var(--green-soft)}
+.tag.no{color:var(--red);border-color:rgba(192,54,47,.35);background:rgba(192,54,47,.07)}
+.tag.park{color:var(--amber);border-color:rgba(183,121,31,.35);background:rgba(183,121,31,.08)}
+.strike{text-decoration:line-through;color:var(--muted)}
+.row2{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.uc.dark{background:var(--dark);color:var(--term);border-color:var(--dark)}
+.uc.dark .uc-body{gap:10px}
+.uc.dark .big{font-family:var(--display);font-size:26px;font-weight:500;letter-spacing:-.02em}
+.uc.dark .uc-foot{background:var(--dark-2);border-color:#333;color:var(--term-muted)}
+.uc.dark .uc-foot a{color:var(--cyan)}
+.ticker{height:96px;overflow:hidden;position:relative;font-family:var(--mono);font-size:11.5px;color:var(--term-muted);-webkit-mask-image:linear-gradient(transparent,#000 20%,#000 80%,transparent);mask-image:linear-gradient(transparent,#000 20%,#000 80%,transparent)}
+.ticker ul{margin:0;padding:0;list-style:none;animation:tk 14s linear infinite}
+.ticker li{height:24px;line-height:24px;white-space:nowrap}
+.ticker li b{color:var(--term-green);font-weight:500}
+.ticker li i{color:var(--term-red);font-style:normal}
+@keyframes tk{to{transform:translateY(-50%)}}
+
+/* container */
+.duel{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.duel{grid-template-columns:1fr}}
+.dcard{padding:22px 22px 20px;display:flex;flex-direction:column;gap:14px}
+.dcard .dt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.03em}
+.dcard .dh{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.02em}
+.track{height:34px;border-radius:9px;background:var(--card);border:1px solid var(--line);position:relative;overflow:hidden;display:flex}
+.seg{height:100%;display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;font-weight:500;color:#fff;width:0;transition:width 1.2s cubic-bezier(.2,.7,.2,1);white-space:nowrap;overflow:hidden}
+.seg.lock{background:#2E2E2C}.seg.build{background:var(--green-bright)}.seg.ship{background:var(--green)}.seg.roast{background:#8FCB6E}
+.on .seg.lock{width:15%}.on .seg.build{width:60%;transition-delay:.25s}.on .seg.ship{width:15%;transition-delay:.55s}.on .seg.roast{width:10%;transition-delay:.75s}
+.seg.forever{background:repeating-linear-gradient(-45deg,#d6d6d1 0 8px,#e6e6e2 8px 16px);color:var(--muted)}
+.on .seg.forever{width:100%}
+.dcard .dn{font-size:13px;color:var(--muted)}
+.dcard .dn b{color:var(--ink);font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{padding:20px 22px}
+.stat .v{font-family:var(--display);font-size:38px;font-weight:500;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.stat .k{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px}
+
+/* bill */
+.bill-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px;align-items:stretch}
+@media (max-width:760px){.bill-wrap{grid-template-columns:1fr}}
+.bill{padding:24px 26px}
+.bill .dt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.03em;margin-bottom:14px}
+.bill ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.bill li{display:flex;justify-content:space-between;font-size:14.5px;position:relative;padding:6px 0;border-bottom:1px dashed var(--line)}
+.bill li span:last-child{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.bill li::after{content:"";position:absolute;left:0;top:50%;height:1.5px;width:0;background:var(--red);transition:width .35s ease;transition-delay:calc(var(--i)*120ms)}
+.on .bill li::after{width:100%}
+.on .bill li{color:var(--muted)}
+.with{padding:24px 26px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:6px}
+.with .dt{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.03em;align-self:flex-start}
+.with .price{font-family:var(--display);font-size:clamp(64px,9vw,104px);font-weight:600;letter-spacing:-.05em;line-height:1;color:var(--green);opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s;transition-delay:1.25s}
+.on .with .price{opacity:1;transform:none}
+.with .per{font-size:15px}
+.with .fine{font-family:var(--mono);font-size:11.5px;color:var(--muted);max-width:34ch;margin-top:10px}
+
+/* event */
+.event{padding:0 0 110px}
+.event .card{display:grid;grid-template-columns:1.1fr 1fr;overflow:hidden}
+@media (max-width:820px){.event .card{grid-template-columns:1fr}}
+.event .l{padding:34px 34px 30px}
+.event .l h2{font-size:clamp(26px,3.6vw,36px)}
+.event .l p{color:var(--muted);margin:14px 0 0;max-width:44ch}
+.event ul{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:8px;font-size:14px}
+.event li::before{content:"›";color:var(--green);font-family:var(--mono);margin-right:8px}
+.event .r{background:var(--dark);color:var(--term);font-family:var(--mono);font-size:12.5px;padding:26px 28px;display:flex;flex-direction:column;gap:10px;line-height:1.6}
+.event .r .k{color:var(--term-muted)}
+.event .r .g{color:var(--term-green)}
+.event .r .c{color:var(--cyan)}
+.event .r .rr{color:var(--term-red)}
+.event .r hr{border:0;border-top:1px dashed #3a3a38;margin:4px 0}
+
+/* setup */
+.setup{padding:0 0 110px}
+.cmd{background:var(--dark);color:var(--term);border-radius:18px;padding:28px 28px 24px;display:flex;flex-direction:column;gap:18px;max-width:760px;margin:40px auto 0}
+.cmd .line{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:14px;text-align:left}
+.cmd .line>span:nth-child(2){min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.cmd .line .d{color:var(--term-muted)}
+.cmd .line .u{color:var(--cyan)}
+.cmd .copy{margin-left:auto;flex:none;font-family:var(--mono);font-size:11.5px;color:var(--term);border:1px solid #3a3a38;border-radius:8px;padding:6px 10px;background:transparent;cursor:pointer}
+.cmd .copy:hover{border-color:#5a5a58}
+.cmd .copy.ok{color:var(--term-reply);border-color:var(--term-reply)}
+.cmd .note{font-size:13px;color:var(--term-muted);line-height:1.6}
+.cmd .note b{color:var(--term);font-weight:500}
+.routes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+@media (max-width:900px){.routes{grid-template-columns:1fr}}
+.route{padding:20px 20px 18px;display:flex;flex-direction:column;gap:10px;min-width:0;text-align:left}
+.route .rt{display:flex;justify-content:space-between;align-items:baseline}
+.route h3{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.route .rt span{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.route p{margin:0;font-size:13px;color:var(--muted)}
+pre{margin:0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12px;line-height:1.6;overflow:auto;color:var(--ink)}
+pre .c{color:var(--muted)}
+.exclusive{font-family:var(--mono);font-size:11.5px;color:var(--muted);text-align:center;margin-top:16px}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:44px 0 40px;font-size:13.5px}
+footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:24px}
+@media (max-width:760px){footer .wrap{grid-template-columns:1fr 1fr}}
+footer h4{margin:0 0 10px;font-size:12px;font-family:var(--mono);color:var(--muted);font-weight:500;letter-spacing:.03em}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+footer a:hover{color:var(--green)}
+footer .fb{display:flex;flex-direction:column;gap:10px;color:var(--muted)}
+footer .fb .brand{color:var(--ink)}
+.copyright{width:min(1120px,calc(100% - 40px));margin:34px auto 0;font-family:var(--mono);font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .hw{opacity:1;transform:none}
+  .uc .st{opacity:1;transform:none}
+  .film tr.in td>span{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="habitat-bunny">
+      <span class="mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 32 32"><circle cx="12" cy="19" r="5" fill="#fff"/><circle cx="20" cy="19" r="5" fill="#fff"/><rect x="9" y="5" width="4" height="12" rx="2" fill="#5CAE30"/><rect x="19" y="5" width="4" height="12" rx="2" fill="#5CAE30"/></svg>
+      </span>
+      <span class="crumb"><b>habitat-bunny</b> / Ship tonight</span>
+    </a>
+    <div class="navlinks">
+      <a href="#film">The sprint</a>
+      <a href="#skills">Skills</a>
+      <a href="#container">Habitat</a>
+      <a href="https://github.com/ycanerden/habitat-bunny" target="_blank" rel="noopener">Open source</a>
+      <a class="pill solid" href="#setup">Set up the bunny</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+<header class="hero wrap">
+  <span class="eyebrow"><i></i>open source · MIT · nothing leaves your machine</span>
+  <h1 aria-label="Claude Code for shipping tonight.">
+    <span class="hw" style="--i:0">
+      <span class="slot" id="slot">
+        <span class="on"><span class="agent-badge">›</span>Claude Code</span>
+        <span><span class="agent-badge">›</span>Codex</span>
+        <span><span class="agent-badge">›</span>Cursor</span>
+        <span><span class="agent-badge">›</span>Gemini CLI</span>
+        <span><span class="agent-badge">›</span>OpenCode</span>
+      </span>
+    </span>
+    <span class="hw" style="--i:1">for</span><br>
+    <span class="hw" style="--i:2">shipping</span>
+    <span class="hw hl" style="--i:3">tonight.</span>
+  </h1>
+  <p class="sub">One skill gives your agent the Habitat night: a <b>clock</b>, a <b>locked one-liner</b>, and a gate that refuses localhost. It grills the idea before you build, parks every side quest, and will not say shipped until <b>a stranger can click a URL</b>. Four hops. One evening.</p>
+  <div class="ctas">
+    <a class="pill solid" href="#setup">Set up the bunny</a>
+    <a class="pill ghost" href="#film">Watch a sprint: 4 hops</a>
+  </div>
+  <div class="works"><span>Claude Code</span><span>Codex</span><span>Cursor</span><span>Gemini CLI</span><span>OpenCode</span><span>any agent that reads a SKILL.md</span></div>
+</header>
+
+<section class="film-wrap" id="film">
+  <div class="wrap">
+    <div class="film card" id="filmcard" aria-label="A habitat-bunny sprint, replayed">
+      <div class="strip"><span class="p">›</span><span id="typed"></span><span class="cur"></span><span class="reply" id="reply"></span></div>
+      <div class="film-body">
+        <table>
+          <thead><tr><th class="c0">#</th><th class="c1">Hop</th><th class="c2">What happened</th><th class="c3">Gate</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <aside class="board">
+          <div class="bt" id="bt">sprint · solo · 4h</div>
+          <div class="brow" id="b-lock"><span class="n">lock</span><span class="t">35m</span><span class="s">waiting</span></div>
+          <div class="brow" id="b-build"><span class="n">build</span><span class="t">2h 35m</span><span class="s">waiting</span></div>
+          <div class="brow" id="b-ship"><span class="n">ship</span><span class="t">35m</span><span class="s">waiting</span></div>
+          <div class="brow" id="b-roast"><span class="n">roast</span><span class="t">15m</span><span class="s">waiting</span></div>
+          <div class="badge" id="badge">a prompt is a suggestion · a gate is a no</div>
+        </aside>
+      </div>
+      <div class="film-foot"><span id="status">the clock has not started</span><span class="meter" id="meter">4:00:00</span></div>
+    </div>
+    <p class="caption">one evening, replayed live — every hop gated, nothing leaves your machine</p>
+  </div>
+</section>
+
+<section id="skills" class="center" style="padding-top:0">
+  <div class="wrap">
+    <h2>One skill. Every hop.</h2>
+    <p class="lede">Say it in plain words. The agent builds, the bunny paces, and the gate says no where a prompt would have said sure.</p>
+    <div class="grid">
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>grill me<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st q" style="--d:300"><b>Who exactly,</b> and where do you find 10 of them this week?</div>
+          <div class="st row2" style="--d:1300"><span class="strike">"developers"</span><span class="tag no">✕ gate 2: ICP</span></div>
+          <div class="st row2" style="--d:2500"><span>indie iOS devs who got a review rejection this month</span><span class="tag ok">✓</span></div>
+          <div class="st q" style="--d:3500">Next: <b>one sentence</b> a friend can repeat back.</div>
+        </div>
+        <div class="uc-foot">grilling · one question at a time · no compliments</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>can we add dark mode?<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st q" style="--d:300">Is dark mode in the locked one-liner?</div>
+          <div class="st row2" style="--d:1400"><span>no</span><span class="tag park">→ .habitat/backlog.md</span></div>
+          <div class="st q" style="--d:2500">Parked. <b>Not forgotten. Not tonight.</b></div>
+          <div class="st row2" style="--d:3500"><span class="mono" style="font-size:11px;color:var(--muted)">build hop · 1h 48m left</span><span class="tag">back to the one-liner</span></div>
+        </div>
+        <div class="uc-foot">check-scope · parked, not built</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>cut the landing copy<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st strike" style="--d:300">The all-in-one platform for modern app teams</div>
+          <div class="st strike" style="--d:900">AI-powered insights, collaboration, and more</div>
+          <div class="st strike" style="--d:1500">Trusted by builders everywhere</div>
+          <div class="st q" style="--d:2600"><b>Paste your App Store rejection. Get the fix.</b></div>
+          <div class="st row2" style="--d:3600"><span class="mono" style="font-size:11px;color:var(--muted)">3 lines → 1</span><span class="tag ok">only the core remains</span></div>
+        </div>
+        <div class="uc-foot">picasso · the after is shorter than the before</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>ship localhost:3000<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st row2" style="--d:300"><span class="mono" style="font-size:12px">http://localhost:3000</span><span class="tag no">✕ refused</span></div>
+          <div class="st q" style="--d:1300">A stranger cannot click that. <b>Deploy it.</b></div>
+          <div class="st row2" style="--d:2600"><span class="mono" style="font-size:12px">https://review-fix.vercel.app</span><span class="tag ok">✓ live</span></div>
+          <div class="st q" style="--d:3600">Recorded in <b>ships.md</b>. Next hop: roast.</div>
+        </div>
+        <div class="uc-foot">ship · a URL a stranger can click</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>roast it<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st row2" style="--d:300"><span>Idea · sharp person, sharp moment</span><span class="tag ok">strong</span></div>
+          <div class="st row2" style="--d:1100"><span>Product · proves the one-liner in 10s</span><span class="tag">ok</span></div>
+          <div class="st row2" style="--d:1900"><span>Potential · would a stranger ask to try it?</span><span class="tag no">weakest</span></div>
+          <div class="st q" style="--d:3000">Tomorrow, 30 min: put the paste box above the fold. <b>Then DM 3 iOS devs.</b></div>
+        </div>
+        <div class="uc-foot">roast · promise vs artifact · one next move</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span><span style="color:var(--term-muted)">(quiet for 20 minutes)</span><span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st row2" style="--d:300"><span class="mono" style="font-size:11px;color:var(--muted)">build hop · 1:12:00 left</span><span class="tag">clock</span></div>
+          <div class="st q" style="--d:1300">You went quiet. <b>What is the next commit?</b></div>
+          <div class="st q" style="--d:2500">Behind pace. Cut one thing from the flow, not from the deploy.</div>
+          <div class="st row2" style="--d:3500"><span>ship hop opens in 1h 12m</span><span class="tag ok">on it</span></div>
+        </div>
+        <div class="uc-foot">pace · the clock talks when you do not</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>/today<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st q" style="--d:300">No evening, no container. <b>One sentence for today.</b></div>
+          <div class="st row2" style="--d:1400"><span class="strike">"work on the onboarding"</span><span class="tag no">mush</span></div>
+          <div class="st row2" style="--d:2500"><span>new users see their first result without signing up</span><span class="tag ok">✓</span></div>
+          <div class="st q" style="--d:3500">Take that sentence to a URL <b>before you stop.</b></div>
+        </div>
+        <div class="uc-foot">today · one hop, already mid-build</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>we're at a hackathon<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st q" style="--d:300">Paste the brief: theme, rules, deadline, judging.</div>
+          <div class="st row2" style="--d:1400"><span>clock</span><span class="tag">= submission deadline 21:00</span></div>
+          <div class="st row2" style="--d:2200"><span>grill</span><span class="tag">= fit against the theme</span></div>
+          <div class="st row2" style="--d:3000"><span>roast</span><span class="tag ok">= the actual judging criteria</span></div>
+        </div>
+        <div class="uc-foot">event mode · organizers: one line for every participant</div>
+      </div>
+
+      <div class="card uc dark" data-uc>
+        <div class="strip"><span class="p">›</span>and the gate underneath<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="big">8 MCP tools</div>
+          <div class="ticker"><ul>
+            <li><b>lock_idea</b> · rejects a vague ICP</li>
+            <li><b>ship</b> · <i>refuses localhost</i></li>
+            <li><b>next_hop</b> · will not skip a hop</li>
+            <li><b>check_scope</b> · parks it in backlog.md</li>
+            <li><b>sprint_status</b> · on pace · behind · overtime</li>
+            <li><b>start_sprint</b> · solo · team · event</li>
+            <li><b>roast</b> · rubric, event addendum</li>
+            <li><b>ship_log</b> · everything that hit a URL</li>
+            <li><b>lock_idea</b> · rejects a vague ICP</li>
+            <li><b>ship</b> · <i>refuses localhost</i></li>
+            <li><b>next_hop</b> · will not skip a hop</li>
+            <li><b>check_scope</b> · parks it in backlog.md</li>
+            <li><b>sprint_status</b> · on pace · behind · overtime</li>
+            <li><b>start_sprint</b> · solo · team · event</li>
+            <li><b>roast</b> · rubric, event addendum</li>
+            <li><b>ship_log</b> · everything that hit a URL</li>
+          </ul></div>
+        </div>
+        <div class="uc-foot">local MCP · no account · no API key · <a href="https://www.npmjs.com/package/habitat-bunny" target="_blank" rel="noopener">npm →</a></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="container" class="center" style="padding-top:0">
+  <div class="wrap">
+    <h2>The container, not the advice.</h2>
+    <p class="lede">AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever. At Habitat nights the magic was never the advice. It was a clock, a locked scope, and a room waiting to see what you made.</p>
+    <div class="duel" data-reveal>
+      <div class="card dcard">
+        <div class="dt">agent alone</div>
+        <div class="dh">Still building.</div>
+        <div class="track"><div class="seg forever">one more feature · one more refactor · never a URL</div></div>
+        <div class="dn">Infinitely agreeable. <b>Says yes to dark mode.</b> Calls localhost a demo.</div>
+      </div>
+      <div class="card dcard">
+        <div class="dt">agent + bunny</div>
+        <div class="dh">A URL by the end of the evening.</div>
+        <div class="track"><div class="seg lock">lock</div><div class="seg build">build</div><div class="seg ship">ship</div><div class="seg roast">roast</div></div>
+        <div class="dn">Four hops, one clock. <b>Says no to dark mode.</b> Refuses localhost.</div>
+      </div>
+    </div>
+    <div class="stats" data-count>
+      <div class="card stat"><div class="v" data-to="600" data-suffix="+">0</div><div class="k">people at Habitat nights</div></div>
+      <div class="card stat"><div class="v" data-to="200" data-suffix="+">0</div><div class="k">MVPs shipped in one evening</div></div>
+      <div class="card stat"><div class="v" data-to="8">0</div><div class="k">cities</div></div>
+      <div class="card stat"><div class="v" data-to="4">0</div><div class="k">countries</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="price" class="center" style="padding-top:0">
+  <div class="wrap">
+    <h2>No cohort. No retainer. No equity.</h2>
+    <p class="lede">The ritual that made 200+ people ship in one evening is a set of markdown files and a tiny local server. It runs where your agent already runs, and it does not phone home.</p>
+    <div class="bill-wrap" data-reveal>
+      <div class="card bill">
+        <div class="dt">what "someone who keeps you honest" usually costs</div>
+        <ul>
+          <li style="--i:0"><span>Founder coach</span><span>$300 / hr</span></li>
+          <li style="--i:1"><span>Startup cohort</span><span>$2,500</span></li>
+          <li style="--i:2"><span>Accelerator</span><span>7% equity</span></li>
+          <li style="--i:3"><span>Accountability app</span><span>$19 / mo</span></li>
+          <li style="--i:4"><span>Hackathon mentor</span><span>fully booked</span></li>
+          <li style="--i:5"><span>A system prompt that says "be strict"</span><span>ignored by hop 2</span></li>
+        </ul>
+      </div>
+      <div class="card with">
+        <div class="dt">with habitat-bunny</div>
+        <div class="price">$0</div>
+        <div class="per">free · MIT · local</div>
+        <div class="fine">No backend, no account, no API key. Delete <span class="mono">.habitat/</span> and the bunny forgets everything.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="event">
+  <div class="wrap">
+    <div class="card">
+      <div class="l">
+        <span class="eyebrow">event mode · for organizers</span>
+        <h2 style="margin-top:12px">Run your whole hackathon on a tool every participant installs in one line.</h2>
+        <p>Tell the bunny you are at an event and paste the brief. From then on the ritual bends to your event, not the other way around.</p>
+        <ul>
+          <li>the clock is the real submission deadline</li>
+          <li>the grill checks fit against the theme</li>
+          <li>shipping checks the submission requirements</li>
+          <li>the roast scores against the actual judging criteria</li>
+        </ul>
+        <div class="ctas" style="justify-content:flex-start;margin-top:24px">
+          <a class="pill solid" href="mailto:ycanerden@gmail.com?subject=habitat-bunny%20at%20our%20event">Talk to us about your event</a>
+          <a class="pill ghost" href="https://lu.ma/habitat" target="_blank" rel="noopener">Come to a Habitat night</a>
+        </div>
+      </div>
+      <div class="r" aria-hidden="true">
+        <div><span class="c">›</span> we're at the climate hackathon, here's the brief</div>
+        <div class="k">reading brief · theme, rules, deadline, judging …</div>
+        <hr>
+        <div><span class="k">mode</span> event · <span class="g">Climate Build Night</span></div>
+        <div><span class="k">clock</span> submission <span class="g">Sat 21:00</span> · 5h 40m left</div>
+        <div><span class="k">gate</span> grill checks fit against theme</div>
+        <div><span class="k">gate</span> ship checks: repo link · 2-min demo video · team slide</div>
+        <div><span class="k">roast</span> scores: impact · feasibility · demo · originality</div>
+        <hr>
+        <div><span class="rr">✕</span> "an app for everyone who cares about climate" · gate 2: ICP</div>
+        <div><span class="g">✓</span> "building managers in Berlin who get fined for heating waste"</div>
+        <div><span class="k">hop</span> build · 4h 50m · the clock is the boss</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="setup" class="setup center">
+  <div class="wrap">
+    <h2>Give your agent the Habitat night.</h2>
+    <p class="lede">Paste one line into the agent you already build with. It reads the setup notes, installs the skills, runs <span class="mono">/setup-habitat</span>, and hands you back three things to try.</p>
+    <div class="cmd">
+      <div class="line"><span class="d">$</span><span>set up habitat-bunny — <span class="u">github.com/ycanerden/habitat-bunny/blob/main/llms.txt</span></span><button class="copy" id="copy" data-text="set up habitat-bunny — github.com/ycanerden/habitat-bunny/blob/main/llms.txt">copy</button></div>
+      <div class="note"><b>What happens:</b> the agent picks the skill route for your editor, never installs both, runs <b>/setup-habitat</b> once in your repo, and asks before adding the optional MCP gate. Nothing is sent anywhere. Then say <b>"let's do a ship sprint"</b>.</div>
+    </div>
+
+    <div class="routes">
+      <div class="card route">
+        <div class="rt"><h3>Claude Code</h3><span>plugin</span></div>
+        <p>A managed bundle of exactly the promoted skills. Type both lines.</p>
+<pre>/plugin marketplace add ycanerden/habitat-bunny
+/plugin install habitat-bunny</pre>
+      </div>
+      <div class="card route">
+        <div class="rt"><h3>Codex, Cursor, others</h3><span>skills.sh</span></div>
+        <p>Writes files you own and edit. Keep <span class="mono">setup-habitat</span> selected.</p>
+<pre>npx skills@latest add ycanerden/habitat-bunny</pre>
+      </div>
+      <div class="card route">
+        <div class="rt"><h3>The MCP gate</h3><span>optional</span></div>
+        <p>Makes the no a tool, not a suggestion. Sits next to either route.</p>
+<pre><span class="c"># Claude Code</span>
+claude mcp add habitat-bunny -- npx -y habitat-bunny</pre>
+      </div>
+    </div>
+    <p class="exclusive">the two skill routes are exclusive: pick one · then run <span style="color:var(--ink)">/setup-habitat</span> once per repo</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fb">
+      <a class="brand" href="#top"><span class="mark"><svg width="16" height="16" viewBox="0 0 32 32"><circle cx="12" cy="19" r="5" fill="#fff"/><circle cx="20" cy="19" r="5" fill="#fff"/><rect x="9" y="5" width="4" height="12" rx="2" fill="#5CAE30"/><rect x="19" y="5" width="4" height="12" rx="2" fill="#5CAE30"/></svg></span><span>habitat-bunny</span></a>
+      <span>The Habitat night, inside the editor you already build with. 100% open source.</span>
+    </div>
+    <div><h4>Use</h4><ul>
+      <li><a href="#film">The sprint</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#setup">Set up</a></li>
+      <li><a href="https://github.com/ycanerden/habitat-bunny/blob/main/SHIPS.md" target="_blank" rel="noopener">Ship wall</a></li>
+    </ul></div>
+    <div><h4>Build</h4><ul>
+      <li><a href="https://github.com/ycanerden/habitat-bunny/tree/main/docs" target="_blank" rel="noopener">Docs</a></li>
+      <li><a href="https://github.com/ycanerden/habitat-bunny/blob/main/llms.txt" target="_blank" rel="noopener">llms.txt</a></li>
+      <li><a href="https://www.npmjs.com/package/habitat-bunny" target="_blank" rel="noopener">npm</a></li>
+      <li><a href="https://github.com/ycanerden/habitat-bunny" target="_blank" rel="noopener">GitHub ↗</a></li>
+    </ul></div>
+    <div><h4>Habitat</h4><ul>
+      <li><a href="https://habitat.md" target="_blank" rel="noopener">habitat.md</a></li>
+      <li><a href="https://lu.ma/habitat" target="_blank" rel="noopener">Events</a></li>
+      <li><a href="mailto:ycanerden@gmail.com">Talk to us</a></li>
+    </ul></div>
+  </div>
+  <div class="copyright"><span>© 2026 Habitat — one hop at a time.</span><span>MIT · no backend · no account · no API keys</span></div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // nav hairline
+  const nav = $('#nav');
+  const onScroll = () => nav.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // rotating agent slot
+  const slot = $('#slot'); const items = [...slot.children]; let si = 0;
+  const fitSlot = () => { slot.style.width = items[si].getBoundingClientRect().width + 'px'; };
+  document.fonts?.ready.then(fitSlot); fitSlot(); addEventListener('resize', fitSlot);
+  if (!reduce) setInterval(() => {
+    items[si].classList.remove('on'); items[si].classList.add('off');
+    const prev = si; si = (si + 1) % items.length;
+    items[si].classList.remove('off'); items[si].classList.add('on'); fitSlot();
+    setTimeout(() => items[prev].classList.remove('off'), 450);
+  }, 2600);
+
+  // copy
+  const copy = $('#copy');
+  copy.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(copy.dataset.text); } catch {}
+    copy.textContent = 'copied'; copy.classList.add('ok');
+    setTimeout(() => { copy.textContent = 'copy'; copy.classList.remove('ok'); }, 1600);
+  });
+
+  // reveal (duel, bill)
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: .35 });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+  // count-up
+  const cio = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; cio.unobserve(e.target);
+    e.target.querySelectorAll('.v').forEach(v => {
+      const to = +v.dataset.to, suf = v.dataset.suffix || '';
+      if (reduce) { v.textContent = to + suf; return; }
+      const t0 = performance.now(), dur = 1100;
+      const tick = (t) => { const p = Math.min(1, (t - t0) / dur), k = 1 - Math.pow(1 - p, 3);
+        v.textContent = Math.round(to * k) + suf; if (p < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    });
+  }), { threshold: .4 });
+  document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+
+  // use-case cards loop only while visible
+  const uio = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('on', e.isIntersecting)), { threshold: .3 });
+  document.querySelectorAll('[data-uc]').forEach(el => uio.observe(el));
+
+  // ---- the film ----
+  const typed = $('#typed'), reply = $('#reply'), rows = $('#rows'), status = $('#status'), meter = $('#meter'), badge = $('#badge'), bt = $('#bt');
+  const board = { lock: $('#b-lock'), build: $('#b-build'), ship: $('#b-ship'), roast: $('#b-roast') };
+  const ROWS = 8;
+  const script = [
+    { hop: 'lock',  what: 'ICP: "developers"',                                         gate: '✕ rejected · gate 2',  cls: 'no' },
+    { hop: 'lock',  what: 'ICP: indie iOS devs who got a review rejection this month', gate: '✓ specific',            cls: 'ok' },
+    { hop: 'lock',  what: 'one-liner: paste your rejection note, get the fix',         gate: '✓ a friend can repeat', cls: 'ok' },
+    { hop: 'lock',  what: 'out of scope: auth · payments · settings',                  gate: '✓ locked',              cls: 'ok' },
+    { hop: 'build', what: '"can we add dark mode?"',                                    gate: '→ backlog.md',          cls: 'park' },
+    { hop: 'ship',  what: 'http://localhost:3000',                                     gate: '✕ refused',             cls: 'no' },
+    { hop: 'ship',  what: 'https://review-fix.vercel.app',                             gate: '✓ live',                cls: 'ok' },
+    { hop: 'roast', what: 'promise vs artifact · weakest: potential',                  gate: 'next: DM 3 iOS devs',   cls: 'ok' },
+  ];
+
+  let clockSec = 4 * 3600, clockTimer = null, running = false, visible = false, gen = 0;
+  const fmt = (s) => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return `${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`; };
+  const setClock = (s) => { clockSec = s; meter.textContent = fmt(s); };
+  const runClock = (perTick) => { stopClock(); clockTimer = setInterval(() => setClock(clockSec - perTick), 1000); };
+  const stopClock = () => { if (clockTimer) clearInterval(clockTimer); clockTimer = null; };
+
+  function blankRows() {
+    rows.innerHTML = '';
+    for (let i = 0; i < ROWS; i++) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i + 1}</td><td class="empty"><span></span></td><td class="empty"><span></span></td><td class="empty"><span></span></td>`;
+      rows.appendChild(tr);
+    }
+  }
+  function fillRow(i) {
+    const r = script[i], tr = rows.children[i]; if (!tr) return;
+    const tds = tr.children;
+    tds[1].className = ''; tds[1].innerHTML = `<span class="hop">${r.hop}</span>`;
+    tds[2].className = ''; tds[2].innerHTML = `<span>${r.what}</span>`;
+    tds[3].className = ''; tds[3].innerHTML = `<span class="gate ${r.cls}">${r.gate}</span>`;
+    requestAnimationFrame(() => tr.classList.add('in'));
+  }
+  function setBoard(now, doneList) {
+    for (const k in board) { const b = board[k], s = b.querySelector('.s'); b.classList.remove('now', 'done');
+      if (doneList.includes(k)) { b.classList.add('done'); s.textContent = 'done'; }
+      else if (k === now) { b.classList.add('now'); s.textContent = 'now'; }
+      else s.textContent = 'waiting'; }
+  }
+  async function type(text, g) {
+    typed.textContent = ''; reply.classList.remove('on');
+    for (const ch of text) { if (g !== gen) return; typed.textContent += ch; await sleep(32); }
+  }
+  async function say(text, g) { if (g !== gen) return; reply.textContent = text; reply.classList.add('on'); }
+  const wait = async (ms, g) => { await sleep(ms); return g === gen; };
+
+  function finalState() {
+    blankRows(); for (let i = 0; i < script.length; i++) fillRow(i);
+    rows.querySelectorAll('tr').forEach(tr => tr.classList.add('in'));
+    typed.textContent = 'roast'; say('↩ shipped · 1 parked · 1 refused · ship log written', gen);
+    setBoard(null, ['lock', 'build', 'ship', 'roast']); setClock(41 * 60 + 12);
+    status.textContent = 'one evening · one URL · ships.md updated'; badge.textContent = 'shipped beats perfect';
+  }
+
+  async function play() {
+    if (running) return; running = true; const g = ++gen;
+    blankRows(); setBoard(null, []); setClock(4 * 3600); stopClock();
+    status.textContent = 'the clock has not started'; badge.textContent = 'a prompt is a suggestion · a gate is a no'; bt.textContent = 'sprint · solo · 4h';
+    reply.classList.remove('on'); typed.textContent = '';
+
+    // act 1: lock
+    if (!await wait(600, g)) return done();
+    await type("let's do a ship sprint", g);
+    if (!await wait(500, g)) return done();
+    await say('↩ sprint started · 4h · hop: lock (35m)', g); setBoard('lock', []); runClock(6); status.textContent = 'lock hop · one question at a time · no compliments';
+    if (!await wait(1400, g)) return done();
+    await type('the ICP is developers', g); if (!await wait(400, g)) return done();
+    fillRow(0); await say('↩ gate 2: too vague. where do you find 10 this week?', g);
+    if (!await wait(1700, g)) return done();
+    await type('indie iOS devs who got a review rejection this month', g); if (!await wait(400, g)) return done();
+    fillRow(1); await say('↩ specific. now one sentence a friend can repeat', g);
+    if (!await wait(1500, g)) return done();
+    await type('paste your rejection note, get the fix', g); if (!await wait(400, g)) return done();
+    fillRow(2); if (!await wait(600, g)) return done(); fillRow(3);
+    await say('↩ locked · hop: build (2h 35m)', g); setBoard('build', ['lock']); runClock(900); status.textContent = 'build hop · only the locked one-liner · the clock is the boss';
+    if (!await wait(2000, g)) return done();
+
+    // act 2: build, ship, roast
+    await type('can we add dark mode?', g); if (!await wait(400, g)) return done();
+    fillRow(4); await say('↩ parked → .habitat/backlog.md · not tonight', g);
+    if (!await wait(1800, g)) return done();
+    await type('ship localhost:3000', g); if (!await wait(400, g)) return done();
+    setBoard('ship', ['lock', 'build']); runClock(20); status.textContent = 'ship hop · a URL a stranger can click';
+    fillRow(5); await say('↩ refused · a stranger cannot click that. deploy it', g);
+    if (!await wait(1800, g)) return done();
+    await type('ship https://review-fix.vercel.app', g); if (!await wait(400, g)) return done();
+    fillRow(6); await say('↩ live · recorded in ships.md · hop: roast (15m)', g); setBoard('roast', ['lock', 'build', 'ship']); runClock(10); status.textContent = 'roast hop · promise vs artifact';
+    if (!await wait(1800, g)) return done();
+    await type('roast', g); if (!await wait(500, g)) return done();
+    fillRow(7); await say('↩ shipped · 1 parked · 1 refused · ship log written', g); setBoard(null, ['lock', 'build', 'ship', 'roast']); stopClock();
+    status.textContent = 'one evening · one URL · ships.md updated'; badge.textContent = 'shipped beats perfect';
+    await wait(4200, g);
+    done();
+    function done() { stopClock(); running = false; if (visible && g === gen && !reduce) play(); }
+  }
+
+  if (reduce) { finalState(); }
+  else {
+    const fio = new IntersectionObserver(es => es.forEach(e => { visible = e.isIntersecting; if (visible && !running) play(); if (!visible) { gen++; running = false; stopClock(); } }), { threshold: .35 });
+    fio.observe($('#filmcard'));
+    blankRows();
+  }
+})();
+</script>
+</body>
+</html>
