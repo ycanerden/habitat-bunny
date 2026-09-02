@@ -15,7 +15,7 @@ That is the loop: people see real ships, they run a sprint, they add theirs.
 
 Skills live under `skills/`. The contract is in [AGENTS.md](./AGENTS.md). Short version:
 
-- Promoted buckets are `sprint/` and `daily/`. Each promoted skill needs a `SKILL.md`, `agents/openai.yaml`, a docs page at `docs/<bucket>/<name>.md`, a line in the bucket README, a line in the top-level README, and an entry in `.claude-plugin/plugin.json`.
+- Promoted buckets are `sprint/` and `daily/`. Each promoted skill needs a `SKILL.md`, `agents/openai.yaml`, a docs page at `docs/<bucket>/<name>.md`, a line in the bucket README, a line in the top-level README, and the same path in `.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.codex-plugin/plugin.json`, and `.grok-plugin/plugin.json`.
 - User-invoked vs model-invoked: see [.agents/invocation.md](./.agents/invocation.md). Keep the frontmatter flag and the Codex `policy` in sync.
 - If you add, rename, or reroute a user-reachable skill, update [ask-bunny](./skills/sprint/ask-bunny/SKILL.md).
 - Install wording is copied from [.agents/install-block.md](./.agents/install-block.md). Do not invent a second command.

@@ -1,12 +1,10 @@
 {
   "name": "habitat-bunny",
-  "displayName": "Habitat bunny",
   "version": "0.1.0",
-  "description": "The Habitat bunny as agent skills: grill, lock, park scope, refuse localhost, roast what shipped.",
+  "description": "The Habitat night, inside Cursor. Grill the idea, park scope creep, refuse localhost, roast what shipped.",
   "author": {
     "name": "Habitat",
-    "email": "ycanerden@gmail.com",
-    "url": "https://habitat.md"
+    "email": "ycanerden@gmail.com"
   },
   "homepage": "https://habitat.md",
   "repository": "https://github.com/ycanerden/habitat-bunny",
@@ -17,8 +15,10 @@
     "sprint",
     "founder",
     "hackathon",
+    "mcp",
     "skills"
   ],
+  "logo": "assets/logo.svg",
   "skills": [
     "./skills/sprint/ask-bunny",
     "./skills/sprint/start-sprint",
@@ -30,5 +30,6 @@
     "./skills/sprint/roast",
     "./skills/daily/today",
     "./skills/daily/pace"
-  ]
+  ],
+  "mcpServers": "./.mcp.json"
 }
