@@ -6,6 +6,18 @@ There are two complementary pieces. **Skills** are the method (the grill, the ho
 
 The two *skill* routes are exclusive. The plugin is a managed bundle. skills.sh writes files you own and edit. Installing both leaves every skill twice: always say "pick one". The MCP is a third thing and can sit next to either.
 
+## 0. Or let the agent do it
+
+The paste-a-prompt route. The human pastes one line into the agent they already build with; the agent reads [`llms.txt`](../llms.txt) and walks steps 1 to 3 below itself, then reports back with three things to try. `llms.txt` repeats the commands in this file verbatim: change them here first, then there.
+
+<canonical-block name="paste-a-prompt">
+
+```text
+set up habitat-bunny — github.com/ycanerden/habitat-bunny/blob/main/llms.txt
+```
+
+</canonical-block>
+
 ## 1. Get the skills
 
 ### Claude Code: the plugin

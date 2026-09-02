@@ -5,15 +5,23 @@
 [![habitat.md](https://img.shields.io/badge/habitat.md-always%20one%20hop%20ahead-5CAE30)](https://habitat.md)
 [![skills.sh](https://skills.sh/b/ycanerden/habitat-bunny)](https://skills.sh/ycanerden/habitat-bunny)
 
-The Habitat night, inside the editor you already build with.
+**Claude Code for shipping a feature in 2 hours.** Also Codex, Cursor, Gemini CLI, OpenCode: any agent that reads a SKILL.md. Set a timer, lock one deliverable, and the bunny says no to everything else until a stranger can click a URL. The Habitat night, inside the editor you already build with.
 
-Your agent writes the code. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and will not call it shipped until a stranger can click a URL.
+Your agent writes the code. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and will not call it shipped until a stranger can click a URL. If you focus best when a clock is running, this is the container.
 
 No backend. No account. No API keys. Nothing leaves your machine.
 
 Two complementary pieces. **Skills** are the method (the grill, the hops, the roast). The **MCP** is the gate (it will refuse a vague ICP, a skipped hop, a localhost URL). Install skills first. Add the MCP if you want the no to be a tool, not a suggestion.
 
 The two skill routes are exclusive. The plugin is a managed bundle. skills.sh writes files you own and edit. Installing both leaves every skill twice: pick one. The MCP can sit next to either.
+
+### 0. Or paste this into your agent
+
+```text
+set up habitat-bunny — github.com/ycanerden/habitat-bunny/blob/main/llms.txt
+```
+
+The agent reads [`llms.txt`](./llms.txt), picks the skill route for your editor, runs `/setup-habitat`, asks before adding the MCP gate, and hands you back three things to try. Steps 1 to 3 below are what it does by hand.
 
 ### 1. Get the skills
 
@@ -52,7 +60,7 @@ Once per repo. It writes the burrow (`.habitat/`) and asks how you sprint.
 claude mcp add habitat-bunny -- npx -y habitat-bunny
 ```
 
-Then say: `let's do a ship sprint`. Or type `/today` if you are already mid-build and lost.
+Then say: `ship sprint, 2 hours, one feature`. Or type `/today` if you are already mid-build and lost.
 
 Built by [Habitat](https://habitat.md): 600+ people, 200+ MVPs, 8 cities, 4 countries. Hover the bunny on the site. It walks.
 
@@ -75,7 +83,7 @@ A prompt cannot hold state across Cursor and Claude Code. The bunny can: it is j
 
 ## How a sprint works
 
-Four hops, one clock. Default window is one evening (4 hours).
+Four hops, one clock. Name any timer: 2 hours, 45 minutes, a hackathon deadline. Default is one evening (4 hours).
 
 1. **Lock the idea.** One question at a time, no compliments. Four gates: a specific problem, an ICP you could find 10 of this week, a one-liner a friend can repeat, at least two things you are NOT building tonight.
 2. **Build.** Only the locked one-liner. Side quests go to the backlog. The clock keeps talking.
@@ -148,7 +156,7 @@ The Habitat night ritual.
 
 - **[grilling](./skills/sprint/grilling/SKILL.md)**: One question at a time, no compliments, until the four lock gates pass.
 - **[check-scope](./skills/sprint/check-scope/SKILL.md)**: Park a mid-sprint feature idea in the backlog. It is not forgotten. It is not tonight.
-- **[picasso](./skills/sprint/picasso/SKILL.md)**: Cut a product, a pitch, or a piece of copy until only the core remains.
+- **[picasso](./skills/sprint/picasso/SKILL.md)**: Delete whatever can go without losing meaning. A sentence, a plan, a page, a product. Named after *Le Taureau*.
 - **[ship](./skills/sprint/ship/SKILL.md)**: Record a live URL a stranger can click. localhost does not count.
 - **[roast](./skills/sprint/roast/SKILL.md)**: Honest read of what shipped vs what was promised, then one next validation move.
 

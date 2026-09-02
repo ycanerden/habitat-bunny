@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>habitat-bunny — Claude Code for shipping a feature in 2 hours</title>
+<meta name="description" content="Set a timer. Give Claude Code, Codex, Cursor or any agent a clock, one locked deliverable, and a gate that says no to everything else until a stranger can click a URL. The Habitat night, inside your editor. Free, open source, local.">
+<meta property="og:title" content="habitat-bunny — Claude Code for shipping a feature in 2 hours">
+<meta property="og:description" content="One skill gives your agent a timer, one locked deliverable, and a gate that refuses localhost. Lock, build, ship, roast. Free, MIT, nothing leaves your machine.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f4f3ee">
+<link rel="icon" href="images/mascot/bunny-sm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --background:#f4f3ee;--foreground:#2c281c;--muted:#ecebe3;--muted-foreground:#666358;--card:#fbfaf8;--border:#dddbd2;
+  --primary:#2c281c;--primary-foreground:#f8f7f2;--brand:#5cae31;--brand-foreground:#fcfaf3;--brand-deep:#336017;--brand-soft:#cbf0b7;--sky:#b6d5f0;
+  --highlight-soft:#cbf0b7;
+  --tag-green:#cbf0b7;--tag-green-ink:#336017;--tag-blue:#c5e1ff;--tag-blue-ink:#3065ae;--tag-olive:#e5ebad;--tag-olive-ink:#60620e;--tag-graphite:#e5e3dc;--tag-graphite-ink:#413d34;--tag-clay:#f3d4cb;--tag-clay-ink:#8f3a2c;
+  --radius:.875rem;--r-md:calc(var(--radius)*.8);--r-lg:var(--radius);--r-2xl:calc(var(--radius)*1.8);
+  --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--background);color:var(--foreground);font:16px/1.6 var(--font-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+p{margin:0}
+::selection{background:var(--brand-soft)}
+.wrap{width:min(64rem,calc(100% - 2rem));margin:0 auto}
+.wrap-wide{width:min(72rem,calc(100% - 2rem));margin:0 auto}
+@media (min-width:640px){.wrap,.wrap-wide{width:min(var(--w,64rem),calc(100% - 3rem))}.wrap-wide{--w:72rem}}
+.display{letter-spacing:-.033em;font-weight:600;line-height:1.06;margin:0;text-wrap:balance}
+.eyebrow{display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.22em;color:var(--muted-foreground)}
+.eyebrow svg{width:16px;height:16px;color:var(--brand)}
+.eyebrow.center{justify-content:center}
+.lede{margin-top:1.25rem;font-size:17px;line-height:1.65;color:var(--muted-foreground);text-wrap:pretty}
+.fine{font-size:15px;line-height:1.6;color:var(--muted-foreground)}
+.mention{font-size:.82em;letter-spacing:-.01em;vertical-align:.06em;white-space:nowrap;border-radius:.45em;align-items:center;gap:.28em;padding:.04em .4em .08em;display:inline-flex;font-weight:500}
+.mention i{display:inline-block;width:.62em;height:.62em;border-radius:999px;background:currentColor;opacity:.55}
+.m-green{background:var(--tag-green);color:var(--tag-green-ink)}.m-blue{background:var(--tag-blue);color:var(--tag-blue-ink)}.m-olive{background:var(--tag-olive);color:var(--tag-olive-ink)}.m-graphite{background:var(--tag-graphite);color:var(--tag-graphite-ink)}.m-clay{background:var(--tag-clay);color:var(--tag-clay-ink)}
+.marker{background-image:linear-gradient(120deg,var(--highlight-soft),var(--highlight-soft));background-position:0 78%;background-repeat:no-repeat;background-size:100% 42%;padding:0 .06em}
+.paper{background-image:radial-gradient(120% 80% at 50% -10%,color-mix(in oklch,var(--sky) 22%,transparent),transparent 60%),radial-gradient(100% 60% at 110% 0%,color-mix(in oklch,var(--brand) 7%,transparent),transparent 55%)}
+section{border-bottom:1px solid var(--border)}
+.bg-card{background:var(--card)}.bg-muted{background:color-mix(in srgb,var(--muted) 30%,transparent)}
+.pad{padding:6rem 0}
+@media (max-width:640px){.pad{padding:4.5rem 0}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.375rem;border-radius:var(--r-md);padding:.625rem 1.25rem;font-size:.875rem;font-weight:500;line-height:1.25;border:1px solid transparent;transition:transform .15s,box-shadow .15s,background .15s,opacity .15s;cursor:pointer;white-space:nowrap}
+.btn svg{width:16px;height:16px;transition:transform .15s}
+.btn-primary{background:var(--primary);color:var(--primary-foreground);box-shadow:0 1px 2px rgba(44,40,28,.08)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 10px -2px rgba(44,40,28,.2)}
+.btn-primary:hover svg{transform:translateX(2px)}
+.btn-secondary{background:var(--card);color:color-mix(in srgb,var(--foreground) 90%,transparent);border-color:var(--border)}
+.btn-secondary:hover{background:var(--muted)}
+.btn-sm{padding:.375rem .875rem}
+.btn-lg{padding:.75rem 1.5rem}
+.btn-light{background:var(--background);color:var(--foreground)}
+.btn-light:hover{transform:translateY(-1px)}
+.btn-ghost{border-color:color-mix(in srgb,var(--primary-foreground) 25%,transparent);color:var(--primary-foreground)}
+.btn-ghost:hover{background:color-mix(in srgb,var(--primary-foreground) 10%,transparent)}
+.textlink{display:inline-flex;align-items:center;gap:.25rem;font-size:.875rem;font-weight:500;text-underline-offset:4px}
+.textlink:hover{text-decoration:underline}
+.textlink svg{width:16px;height:16px;transition:transform .15s}
+.textlink:hover svg{transform:translate(2px,-2px)}
+
+/* header */
+header{position:sticky;top:0;z-index:40;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--background) 85%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+header .wrap-wide{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:4rem}
+.lockup{display:inline-flex;align-items:center;gap:.625rem}
+.lockup svg{height:28px;width:30px;flex:none;transition:transform .2s}
+.lockup:hover svg{transform:translateY(-2px)}
+.lockup .word{font-size:1.45rem;font-weight:500;line-height:1;letter-spacing:-.02em}
+.lockup .crumb{color:var(--muted-foreground);font-size:1.1rem;font-weight:400;margin:0 .1rem}
+.hleft{display:flex;align-items:center;gap:1rem}
+.pillnav{display:none;align-items:center;border:1px solid var(--border);background:var(--card);border-radius:999px;padding:.25rem}
+.pillnav a{border-radius:999px;padding:.375rem .875rem;font-size:.875rem;font-weight:500;color:var(--muted-foreground);transition:background .15s,color .15s}
+.pillnav a:hover{background:var(--muted);color:var(--foreground)}
+@media (min-width:1024px){.pillnav{display:flex}}
+.hright{display:flex;align-items:center;gap:.5rem}
+@media (max-width:640px){.hright .btn-secondary{display:none}.lockup .crumb,.lockup .prod{display:none}}
+
+/* hero */
+.hero{position:relative;overflow:hidden;background:var(--background)}
+.hero .inner{position:relative;text-align:center;padding:4rem 0 4rem}
+@media (min-width:640px){.hero .inner{padding-top:5.5rem}}
+h1.display{font-size:2.35rem;line-height:1.12;margin:0 auto;max-width:64rem}
+@media (min-width:640px){h1.display{font-size:3.25rem;line-height:1.1}}
+@media (min-width:1024px){h1.display{font-size:4rem;line-height:1.08;white-space:nowrap}}
+.chip-img{display:inline-block;height:.82em;width:1.25em;margin:0 .18em;transform:translateY(-.03em);overflow:hidden;border-radius:.24em;vertical-align:middle;box-shadow:inset 0 0 0 1px rgba(44,40,28,.1);background:linear-gradient(to top,#8dc46a,#a9d5f0)}
+.chip-img img{width:100%;height:100%;object-fit:contain;padding:.06em;filter:drop-shadow(0 .05em .08em rgba(44,40,28,.3))}
+.slot{display:inline-grid;position:relative;text-align:left;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.slot>span{grid-area:1/1;justify-self:start;width:max-content;white-space:nowrap;opacity:0;transform:translateY(.4em);transition:opacity .45s ease,transform .45s cubic-bezier(.2,.7,.2,1)}
+.slot>span.on{opacity:1;transform:none}
+.slot>span.off{opacity:0;transform:translateY(-.4em);transition-duration:.22s}
+@media (max-width:1023px){
+  .hw.has-slot{display:block}
+  .slot{display:block;position:relative;width:100%!important;transition:height .45s cubic-bezier(.2,.7,.2,1)}
+  .slot>span{position:absolute;left:0;top:0;width:100%;white-space:normal;text-align:center}
+}
+.hero .lede{max-width:36rem;margin-left:auto;margin-right:auto;margin-top:1.75rem}
+.hero .agents{margin-top:1rem;max-width:36rem;margin-left:auto;margin-right:auto;font-size:15px;line-height:1.9;color:var(--muted-foreground)}
+.ctas{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;margin-top:2.25rem}
+@media (min-width:640px){.ctas{flex-direction:row}}
+.stats{margin-top:2.5rem;font-size:15px;line-height:1.9;color:var(--muted-foreground)}
+
+/* hills frame + film */
+.frame{position:relative;margin:4rem auto 0;max-width:64rem;border-radius:2rem;border:1px solid var(--border);overflow:hidden;box-shadow:0 50px 120px -60px rgba(44,40,28,.55);background:#9dc1e8}
+.frame>img.hills{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:bottom}
+.frame .stage{position:relative;padding:2.5rem 1rem 6.5rem}
+@media (min-width:640px){.frame .stage{padding:3rem 2rem 7.5rem}}
+.frame .doodles{position:absolute;inset:auto 0 0;display:flex;align-items:flex-end;justify-content:space-between;padding:0 4% 1.25rem;pointer-events:none}
+.frame .doodles img{width:5rem;height:auto;user-select:none}
+@media (min-width:640px){.frame .doodles img{width:7rem}.frame .doodles{padding:0 5% 1.75rem}}
+.frame .shade{position:absolute;inset:auto 0 0;height:9rem;background:linear-gradient(to top,rgba(0,0,0,.15),transparent)}
+.film{position:relative;z-index:2;width:min(46rem,100%);margin:0 auto;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r-2xl);overflow:hidden;box-shadow:0 30px 70px -40px rgba(60,40,20,.5)}
+.strip{background:var(--primary);color:var(--primary-foreground);font-size:13.5px;font-weight:500;height:48px;display:flex;align-items:center;gap:.6rem;padding:0 1rem;white-space:nowrap;overflow:hidden}
+.strip .p{color:#8fd471;font-weight:700}
+.strip .cur{width:8px;height:17px;background:#8fd471;border-radius:1px;display:inline-block;animation:blink 1s steps(1) infinite;flex:none}
+@keyframes blink{50%{opacity:0}}
+.strip .reply{margin-left:auto;color:var(--brand-soft);font-weight:500;opacity:0;transition:opacity .3s;overflow:hidden;text-overflow:ellipsis}
+.strip .reply.on{opacity:1}
+.film-body{display:grid;grid-template-columns:1fr 13.5rem;min-height:300px}
+.film table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.film th{font-size:.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground);text-align:left;padding:.8rem .75rem .55rem;border-bottom:1px solid var(--border)}
+.film th.c0{width:2.6rem}.film th.c1{width:4.2rem}.film th.c3{width:10.5rem}
+.film th:first-child,.film td:first-child{padding-left:1.1rem;color:var(--muted-foreground);font-size:12px;font-variant-numeric:tabular-nums}
+.film td{padding:0 .75rem;height:34px;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap;overflow:hidden}
+.film td.empty{background:repeating-linear-gradient(-45deg,transparent 0 6px,var(--muted) 6px 7px);opacity:.8}
+.film tr.in td{background:none;opacity:1}
+.film tr td>span{display:block;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+.film tr.in td>span{opacity:1;transform:none}
+.film td>span.hop{font-size:12px;color:var(--muted-foreground)}
+.film td>span.gate{overflow:visible}
+.board{border-left:1px solid var(--border);background:color-mix(in srgb,var(--muted) 45%,transparent);padding:.9rem .85rem;display:flex;flex-direction:column;gap:.45rem}
+.board .bt{font-size:.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground);margin:0 0 .2rem .15rem}
+.brow{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:.5rem .65rem;display:grid;grid-template-columns:1fr auto;gap:.05rem .5rem;font-size:12.5px;transition:box-shadow .3s,border-color .3s,opacity .3s}
+.brow .n{font-weight:600}
+.brow .t{font-size:11.5px;color:var(--muted-foreground);font-variant-numeric:tabular-nums}
+.brow .s{grid-column:1/-1;font-size:11px;color:var(--muted-foreground)}
+.brow.now{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
+.brow.now .s{color:var(--brand-deep);font-weight:500}
+.brow.done{opacity:.55}.brow.done .s{color:var(--brand-deep)}
+.badge{margin-top:auto;font-size:11px;color:var(--muted-foreground);border:1px dashed var(--border);border-radius:var(--r-md);padding:.35rem .5rem;text-align:center}
+.film-foot{display:flex;justify-content:space-between;align-items:center;padding:.65rem 1.1rem;background:var(--background);border-top:1px solid var(--border);font-size:12.5px;color:var(--muted-foreground)}
+.meter{color:var(--brand-deep);font-weight:600;font-variant-numeric:tabular-nums;font-size:14px}
+.caption{text-align:center;font-size:.75rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-foreground);margin-top:1.25rem}
+@media (max-width:760px){.film-body{grid-template-columns:1fr}.board{border-left:0;border-top:1px solid var(--border)}.film th:nth-child(2),.film td:nth-child(2){display:none}.film th.c0{width:2rem}.film th.c3{width:9rem}.frame .doodles{display:none}.frame .stage{padding-bottom:2.5rem}}
+
+/* list rows */
+.rows{margin-top:3.5rem;border-top:1px solid var(--border)}
+.row{display:grid;gap:1rem;border-bottom:1px solid var(--border);padding:2rem 0}
+@media (min-width:640px){.row{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:2.5rem;padding:2.5rem 0}.row>p{padding-top:1.5rem}}
+.row .k{font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--muted-foreground)}
+.row h3{font-size:1.6rem;margin-top:.5rem}
+@media (min-width:640px){.row h3{font-size:1.9rem}}
+.row .k2{margin-top:.5rem}
+.row>p{font-size:16px;line-height:1.65;color:var(--muted-foreground)}
+.intro{display:grid;gap:2rem;align-items:start}
+@media (min-width:768px){.intro{grid-template-columns:minmax(0,1fr) auto}}
+.intro .max{max-width:42rem}
+.mascot{width:7rem;height:auto;filter:drop-shadow(0 18px 28px rgba(44,40,28,.28));justify-self:end}
+@media (min-width:640px){.mascot{width:9rem}}
+h2.display{font-size:2.25rem;margin-top:1.25rem}
+@media (min-width:640px){h2.display{font-size:3.25rem}}
+
+/* cards grid */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:3rem;text-align:left}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-2xl);overflow:hidden}
+.uc{display:flex;flex-direction:column;min-height:250px}
+.uc .strip{height:44px;font-size:13px;padding:0 .9rem;background:var(--muted);color:var(--foreground)}
+.uc .strip .p,.uc .strip .cur{color:var(--brand-deep);background:none}
+.uc .strip .cur{background:var(--brand)}
+.uc-body{padding:.9rem 1rem;flex:1;display:flex;flex-direction:column;gap:.45rem;font-size:13px}
+.uc-foot{font-size:.7rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground);padding:.65rem 1rem;border-top:1px solid var(--border);background:var(--background)}
+.st{opacity:0;transform:translateY(5px)}
+.uc.on .st{animation:stepin 5.6s cubic-bezier(.2,.7,.2,1) infinite;animation-delay:calc(var(--d)*1ms)}
+@keyframes stepin{0%{opacity:0;transform:translateY(5px)}6%{opacity:1;transform:none}88%{opacity:1;transform:none}96%,100%{opacity:0;transform:translateY(-3px)}}
+.q{background:var(--background);border:1px solid var(--border);border-radius:var(--r-md);padding:.5rem .65rem;line-height:1.5}
+.q b{font-weight:600}
+.row2{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.strike{text-decoration:line-through;color:var(--muted-foreground)}
+.uc.dark{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary)}
+.uc.dark .strip{background:#3a3527;color:var(--primary-foreground)}
+.uc.dark .strip .p{color:#8fd471}.uc.dark .strip .cur{background:#8fd471}
+.uc.dark .big{font-size:1.9rem;letter-spacing:-.03em;font-weight:600}
+.uc.dark .uc-foot{background:#3a3527;border-color:#4a4536;color:color-mix(in srgb,var(--primary-foreground) 60%,transparent)}
+.uc.dark .uc-foot a{color:#a9dd93;text-transform:none;letter-spacing:0}
+.ticker{height:96px;overflow:hidden;position:relative;font-size:12.5px;color:color-mix(in srgb,var(--primary-foreground) 65%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 20%,#000 80%,transparent);mask-image:linear-gradient(transparent,#000 20%,#000 80%,transparent)}
+.ticker ul{margin:0;padding:0;list-style:none;animation:tk 14s linear infinite}
+.ticker li{height:24px;line-height:24px;white-space:nowrap}
+.ticker li b{color:#a9dd93;font-weight:600}
+@keyframes tk{to{transform:translateY(-50%)}}
+
+/* container */
+.duel{margin-top:3rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media (max-width:760px){.duel{grid-template-columns:1fr}}
+.dcard{padding:1.5rem;display:flex;flex-direction:column;gap:.9rem}
+.dcard .k{font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--muted-foreground)}
+.dcard h3{font-size:1.35rem;margin:0}
+.track{height:34px;border-radius:var(--r-md);background:var(--background);border:1px solid var(--border);overflow:hidden;display:flex}
+.seg{height:100%;display:grid;place-items:center;font-size:11px;font-weight:600;color:#fff;width:0;transition:width 1.2s cubic-bezier(.2,.7,.2,1);white-space:nowrap;overflow:hidden}
+.seg.lock{background:var(--primary)}.seg.build{background:var(--brand)}.seg.ship{background:var(--brand-deep)}.seg.roast{background:#8fcb6e}
+.on .seg.lock{width:15%}.on .seg.build{width:60%;transition-delay:.25s}.on .seg.ship{width:15%;transition-delay:.55s}.on .seg.roast{width:10%;transition-delay:.75s}
+.seg.forever{background:repeating-linear-gradient(-45deg,var(--muted) 0 8px,#e2e0d7 8px 16px);color:var(--muted-foreground)}
+.on .seg.forever{width:100%}
+.dcard .dn{font-size:14px;color:var(--muted-foreground)}
+.dcard .dn b{color:var(--foreground);font-weight:600}
+.photo-card{position:relative;margin-top:1rem;border-radius:2rem;overflow:hidden;border:1px solid var(--border);min-height:22rem;display:flex;align-items:flex-end;box-shadow:0 30px 70px -40px rgba(60,40,20,.4)}
+.photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-card .ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(20,18,10,.72),rgba(20,18,10,.15) 60%,rgba(20,18,10,.05))}
+.photo-card .txt{position:relative;padding:2.5rem;color:#fcfaf3;max-width:36rem}
+.photo-card .txt .k{font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;opacity:.75}
+.photo-card .txt h3{font-size:2rem;margin-top:.6rem;line-height:1.1}
+@media (min-width:640px){.photo-card .txt h3{font-size:2.6rem}}
+.photo-card .txt p{margin-top:.9rem;font-size:15.5px;line-height:1.6;opacity:.85}
+
+/* bill */
+.bill-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:3rem;align-items:stretch}
+@media (max-width:760px){.bill-wrap{grid-template-columns:1fr}}
+.bill{padding:1.6rem 1.75rem}
+.bill .k{font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--muted-foreground);margin-bottom:.75rem}
+.bill ul{list-style:none;margin:0;padding:0}
+.bill li{display:flex;justify-content:space-between;gap:1rem;font-size:15px;position:relative;padding:.7rem 0;border-bottom:1px solid var(--border)}
+.bill li span:last-child{color:var(--muted-foreground);font-variant-numeric:tabular-nums;white-space:nowrap}
+.bill li::after{content:"";position:absolute;left:0;top:50%;height:1.5px;width:0;background:var(--tag-clay-ink);transition:width .35s ease;transition-delay:calc(var(--i)*120ms)}
+.on .bill li::after{width:100%}
+.on .bill li{color:var(--muted-foreground)}
+.with{padding:1.6rem 1.75rem;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:.4rem}
+.with .k{font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--muted-foreground);align-self:flex-start}
+.with .price{font-size:clamp(4rem,9vw,6.5rem);font-weight:600;letter-spacing:-.05em;line-height:1;opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s;transition-delay:1.25s}
+.on .with .price{opacity:1;transform:none}
+.with .per{font-size:15px;margin-top:.4rem}
+.with .fine{max-width:30ch;margin-top:.6rem;font-size:14px}
+
+/* green band */
+.wave{display:block;width:100%;height:3.5rem;background:var(--card)}
+@media (min-width:640px){.wave{height:5rem}}
+.band{background:var(--brand-deep);color:var(--brand-foreground);border-bottom:0}
+.band .eyebrow{color:color-mix(in srgb,var(--brand-foreground) 70%,transparent)}
+.band .eyebrow svg{color:var(--brand-soft)}
+.band .lede{color:color-mix(in srgb,var(--brand-foreground) 78%,transparent)}
+.glass{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:3rem}
+@media (max-width:760px){.glass{grid-template-columns:1fr}}
+.gcard{border-radius:var(--r-2xl);border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);padding:1.5rem;backdrop-filter:blur(2px)}
+.gcard h3{font-size:1.2rem;margin:0}
+.gcard p{margin-top:.5rem;font-size:15px;line-height:1.6;color:color-mix(in srgb,var(--brand-foreground) 75%,transparent)}
+.gcard.wide{grid-column:1/-1;display:grid;gap:.55rem;font-size:14px;line-height:1.55}
+.gcard.wide .l{display:flex;gap:.75rem;align-items:baseline}
+.gcard.wide .l .k{width:4.5rem;flex:none;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.16em;color:color-mix(in srgb,var(--brand-foreground) 60%,transparent)}
+.gcard.wide .ok{color:var(--brand-soft);font-weight:600}
+.gcard.wide .no{color:#f5c1b4;font-weight:600}
+.band .ctas{justify-content:flex-start;margin-top:2.5rem}
+
+/* setup */
+.cmdcard{margin:2.5rem auto 0;max-width:46rem;text-align:left}
+.cmdcard .box{display:flex;align-items:center;gap:.75rem;border-radius:var(--r-md);border:1px solid var(--border);background:var(--background);padding:.75rem 1rem;font-size:14px}
+.cmdcard .box .d{color:var(--muted-foreground)}
+.cmdcard .box .u{color:var(--brand-deep);font-weight:500}
+.cmdcard .box span:nth-child(2){min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none;flex:1}
+.cmdcard .note{margin-top:.9rem;font-size:14px;line-height:1.6;color:var(--muted-foreground)}
+.cmdcard .note b{color:var(--foreground);font-weight:600}
+.routes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.5rem;text-align:left}
+@media (max-width:900px){.routes{grid-template-columns:1fr}}
+.route{padding:1.35rem 1.35rem 1.25rem;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.route .rt{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+.route h3{font-size:1.05rem;font-weight:600;margin:0;letter-spacing:-.01em}
+.route .rt span{font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.14em;color:var(--muted-foreground)}
+.route p{font-size:14px;color:var(--muted-foreground);line-height:1.55}
+code.block{display:block;margin:0;background:var(--background);border:1px solid var(--border);border-radius:var(--r-md);padding:.75rem 1rem;font-family:var(--font-sans);font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--foreground)}
+code.block .c{color:var(--muted-foreground)}
+.exclusive{margin-top:1.25rem;text-align:center}
+
+/* closing band */
+.closing{background:var(--primary);color:var(--primary-foreground);border-bottom:0;text-align:center}
+.closing .pad{padding:7rem 0}
+.trio{display:flex;align-items:flex-end;justify-content:center;gap:1.5rem;margin-bottom:2.5rem;color:var(--brand)}
+.trio svg{width:40px;height:40px}
+.trio svg.big{width:48px;height:48px}
+.closing h2.display{font-size:2.6rem;margin:0 auto;max-width:48rem}
+@media (min-width:640px){.closing h2.display{font-size:4.25rem}}
+.closing .lede{color:color-mix(in srgb,var(--primary-foreground) 70%,transparent);max-width:36rem;margin-left:auto;margin-right:auto}
+.closing .stats{color:color-mix(in srgb,var(--primary-foreground) 60%,transparent)}
+.closing .small{margin-top:2rem;font-size:14px;color:color-mix(in srgb,var(--primary-foreground) 55%,transparent)}
+.closing .small a{text-decoration:underline;text-underline-offset:2px}
+
+/* footer */
+footer{border-top:1px solid var(--border);background:var(--background);padding:3.5rem 0}
+@media (min-width:640px){footer{padding:5rem 0}}
+footer .cols{display:grid;gap:2.5rem}
+@media (min-width:1024px){footer .cols{grid-template-columns:2fr 1fr 1fr}}
+footer h4{margin:0 0 .9rem;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.16em;color:var(--muted-foreground)}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;font-size:14.5px}
+footer ul a{color:color-mix(in srgb,var(--foreground) 80%,transparent)}
+footer ul a:hover{color:var(--foreground)}
+footer .fb p{margin-top:1rem;font-size:14px;color:var(--muted-foreground);max-width:34rem}
+.copyright{margin-top:3rem;font-size:13px;color:var(--muted-foreground);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+
+/* bunny walker (ported from habitat.md) */
+.bunny-walker{pointer-events:none;z-index:50;height:9.5rem;position:fixed;inset:auto 0 0;overflow:hidden}
+.bunny-walker-actor{animation:7s cubic-bezier(.42,0,.2,1) forwards bunny-cross;position:absolute;bottom:.85rem;left:0}
+.bunny-walker-hop{display:flex;justify-content:center;align-items:flex-end;position:relative;animation:.4s ease-in-out infinite bunny-hop}
+.bunny-walker-face{width:5.25rem;height:auto;display:block;user-select:none;filter:drop-shadow(0 14px 18px #2c281c47)}
+.bunny-walker-shadow{display:block;width:3.4rem;height:.55rem;margin:.15rem auto 0;border-radius:999px;background:#2c281c2e;filter:blur(2px);animation:.4s ease-in-out infinite bunny-shadow}
+.bunny-prop,.bunny-say{opacity:0;pointer-events:none;position:absolute}
+.bunny-prop-book{animation:7s linear forwards bunny-prop-in;bottom:1.1rem;left:-2.4rem;transform:rotate(-12deg)}
+.bunny-prop-coffee{animation:7s linear forwards bunny-prop-coffee;bottom:.35rem;right:-2.6rem}
+.bunny-prop-coffee img{width:2.75rem}
+.bunny-say{border:1px solid var(--border);background:var(--card);color:var(--foreground);width:max-content;max-width:11rem;letter-spacing:-.02em;border-radius:999px;padding:.28rem .7rem;font-size:11.5px;font-weight:600;bottom:5.6rem;left:50%;translate:-50%;box-shadow:0 8px 20px -12px #2c281c73}
+.bunny-say-read{animation:7s linear forwards bunny-say-read}
+.bunny-say-prep{animation:7s linear forwards bunny-say-prep}
+@keyframes bunny-cross{0%{transform:translate(-7rem)}18%,34%{transform:translate(22vw)}52%,68%{transform:translate(58vw)}to{transform:translate(calc(100vw + 7rem))}}
+@keyframes bunny-hop{0%,to{transform:translateY(0)rotate(-3deg)}50%{transform:translateY(-11px)rotate(3deg)}}
+@keyframes bunny-shadow{0%,to{opacity:.55;transform:scaleX(1)}50%{opacity:.28;transform:scaleX(.72)}}
+@keyframes bunny-prop-in{0%,17%{opacity:0;transform:rotate(-12deg)translateY(8px)}20%,32%{opacity:1;transform:rotate(-8deg)translateY(0)}36%,to{opacity:0;transform:rotate(-12deg)translateY(8px)}}
+@keyframes bunny-prop-coffee{0%,51%{opacity:0;transform:translateY(8px)}54%,66%{opacity:1;transform:translateY(0)}70%,to{opacity:0;transform:translateY(8px)}}
+@keyframes bunny-say-read{0%,18%{opacity:0;transform:translateY(6px)}21%,31%{opacity:1;transform:translateY(0)}35%,to{opacity:0}}
+@keyframes bunny-say-prep{0%,52%{opacity:0;transform:translateY(6px)}55%,65%{opacity:1;transform:translateY(0)}69%,to{opacity:0}}
+@media (min-width:640px){.bunny-walker{height:11rem}.bunny-walker-face{width:6.5rem}.bunny-say{font-size:12.5px;bottom:6.6rem}.bunny-prop-coffee img{width:3.5rem}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .uc .st{opacity:1;transform:none}
+  .film tr.in td>span{opacity:1}
+  .bunny-walker{display:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logomark" viewBox="233 194 123 114"><path d="M305.605 202.051C306.709 201.906 308.01 202.091 309.064 202.346C311.988 203.054 314.65 205.65 316.018 208.286C322.096 219.998 319.727 240.336 317.365 252.84C316.471 257.441 315.392 262.005 314.128 266.52C318.645 270.54 321.704 276.354 323.236 282.135C329.048 283.096 334.23 283.732 339.862 285.765C346.551 288.18 347.701 291.553 340.291 294.343C335.591 296.112 330.658 297.03 325.691 297.802C316.804 299.105 307.84 299.816 298.858 299.934C285.453 300.224 271.322 299.598 258.109 297.276C253.983 296.551 249.478 295.571 245.606 293.946C244.341 293.398 242.044 292.229 241.609 290.846C240.668 287.856 246.084 286.075 248.099 285.368C253.606 283.516 259.114 282.808 264.805 281.984C266.373 276.887 268.153 272.025 271.839 268.018C271.318 261.973 269.672 256.078 266.985 250.634C265.707 248.07 264.199 245.497 262.687 243.069C259.514 237.979 256.591 233.363 256.428 227.177C256.319 223.021 257.453 219.166 260.406 216.092C262.804 213.568 266.111 212.1 269.598 212.013C280.523 211.794 285.061 224.981 287.632 233.426C290.494 242.828 291.429 251.986 291.585 261.764C293.422 261.685 294.984 261.665 296.819 261.682C296.984 254.812 296.516 248.045 296.142 241.096C295.627 231.13 294.094 220.581 296.477 210.757C297.549 206.337 300.911 202.556 305.605 202.051Z"/><path fill="var(--background)" d="M305.804 205.854C310.969 205.379 313.605 210.889 314.558 215.131C317.382 227.693 315.721 242.181 313.081 254.69C312.546 257.255 311.947 259.806 311.285 262.342C310.902 263.819 310.35 265.662 310.087 267.171C309.953 267.935 311.198 268.94 311.761 269.468C312.255 269.933 312.728 270.421 313.179 270.929C317.684 275.96 320.233 283.141 320.663 289.809C320.779 291.614 320.719 293.254 320.615 295.054C316.697 295.485 313.051 295.997 309.068 296.309C297.982 297.155 286.846 297.092 275.771 296.121C272.744 295.863 269.725 295.514 266.719 295.074C266.581 287.833 268.935 279.358 272.638 273.1C273.225 272.108 275.662 269.66 275.669 268.881C275.691 266.272 275.115 263.307 274.603 260.735C273.55 256.027 271.855 251.485 269.566 247.235C268.495 245.256 267.36 243.313 266.161 241.409C263.71 237.469 261.066 233.573 260.384 228.876C259.936 225.796 260.389 222.183 262.314 219.639C263.865 217.618 266.162 216.297 268.694 215.968C271.07 215.642 273.276 216.283 275.164 217.736C282.62 223.473 286.496 242.908 287.304 252.046C287.519 254.499 287.659 256.959 287.724 259.421C287.761 260.95 287.744 262.486 287.848 264.013C287.912 264.942 288.815 265.826 289.771 265.748C291.561 265.602 293.293 265.479 295.093 265.487C296.369 265.493 297.667 265.621 298.924 265.567C300.595 265.415 300.568 263.358 300.603 262.1C300.705 256.511 300.577 250.92 300.217 245.341C300.068 242.618 299.897 239.896 299.704 237.176C299.206 230.273 297.721 214.288 301.553 208.613C302.599 207.065 303.978 206.198 305.804 205.854Z"/><path d="M282.9 281.2C286.879 280.905 287.69 288.475 283.571 289.553C279.435 289.757 278.867 282.191 282.9 281.2Z"/><path d="M305.26 281.194C309.297 281.087 309.889 288.511 305.87 289.557C301.669 289.762 301.237 282.052 305.26 281.194Z"/><path d="M294.307 288.612C295.466 288.648 296.566 288.829 297.508 289.565C299.279 290.951 298.453 292.987 296.605 293.715C295.801 294.032 295.288 294.101 294.418 294.156C293.208 294.111 292.147 293.962 291.156 293.201C290.058 292.358 289.854 290.916 290.844 289.895C291.778 288.932 293.012 288.679 294.307 288.612Z"/></symbol>
+    <symbol id="i-bunny-face" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M34 74 C 29 56, 33 44, 50 44 C 67 44, 71 56, 66 74"/><path d="M43 46 C 40 26, 41 13, 45 9 C 50 14, 49 30, 49 46"/><path d="M53 46 C 53 30, 55 15, 60 12 C 64 19, 61 33, 58 47"/><path d="M20 76 C 34 86, 66 86, 80 76"/><circle cx="44" cy="60" r="2.6" fill="currentColor" stroke="none"/><circle cx="57" cy="60" r="2.6" fill="currentColor" stroke="none"/><path d="M48 67 C 50 69, 52 69, 54 67"/></g></symbol>
+    <symbol id="i-carrot" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M37 44 C 42 70, 47 84, 51 92 C 56 82, 60 64, 64 44 C 56 39, 45 39, 37 44 Z"/><path d="M50 44 C 47 31, 43 24, 36 20"/><path d="M52 43 C 52 28, 54 19, 57 11"/><path d="M55 44 C 60 33, 66 29, 72 26"/><path d="M43 54 L 47 53"/><path d="M46 66 L 51 65"/></g></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 100 100"><path fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M50 8 C 54 34, 66 46, 92 50 C 66 54, 54 66, 50 92 C 46 66, 34 54, 8 50 C 34 46, 46 34, 50 8 Z"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M30 90 L 30 12"/><path d="M30 16 C 48 6, 60 26, 78 16 L 78 48 C 60 58, 48 38, 30 48 Z"/></g></symbol>
+    <symbol id="i-smile" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="40"/><path d="M36 42 L 36 46"/><path d="M64 42 L 64 46"/><path d="M34 60 C 42 72, 58 72, 66 60"/></g></symbol>
+    <symbol id="i-bulb" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M50 14 C 70 14, 82 30, 78 48 C 75 60, 64 64, 62 76 L 38 76 C 36 64, 25 60, 22 48 C 18 30, 30 14, 50 14 Z"/><path d="M40 84 L 60 84"/><path d="M44 92 L 56 92"/></g></symbol>
+    <symbol id="i-clock" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="54" r="34"/><path d="M50 34 L 50 56 L 64 64"/><path d="M40 10 L 60 10"/></g></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></g></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></g></symbol>
+  </defs>
+</svg>
+
+<header>
+  <div class="wrap-wide">
+    <div class="hleft">
+      <a class="lockup" href="#top" aria-label="habitat-bunny home" title="Hover the bunny" id="lockup">
+        <svg viewBox="0 0 123 114" fill="currentColor" aria-hidden="true"><use href="#i-logomark"/></svg>
+        <span class="display word">Habitat</span>
+        <span class="crumb">/</span>
+        <span class="prod"><span class="mention m-blue">habitat-bunny</span></span>
+      </a>
+      <nav class="pillnav">
+        <a href="#film">Sprint</a>
+        <a href="#focus">Focus</a>
+        <a href="#skills">Skills</a>
+        <a href="#organizers">Organizers</a>
+        <a href="#setup">Set up</a>
+      </nav>
+    </div>
+    <div class="hright">
+      <a class="btn btn-secondary btn-sm" href="https://github.com/ycanerden/habitat-bunny" target="_blank" rel="noreferrer">GitHub</a>
+      <a class="btn btn-primary btn-sm" href="#setup">Set up the bunny</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero paper">
+  <div class="wrap-wide inner">
+    <h1 class="display" aria-label="Claude Code for shipping a feature in 2 hours.">
+      <span class="chip-img"><img src="images/mascot/bunny-sm.png" alt=""></span><span class="hw has-slot"><span class="slot" data-slot>
+        <span class="on">Claude Code</span>
+        <span>Codex</span>
+        <span>Cursor</span>
+        <span>Gemini CLI</span>
+        <span>OpenCode</span>
+      </span></span> for shipping<br>
+      <span class="hw has-slot"><span class="slot" data-slot>
+        <span class="on">a feature <span class="marker">in 2 hours</span>.</span>
+        <span>an MVP <span class="marker">in one evening</span>.</span>
+        <span>a fix <span class="marker">in 45 minutes</span>.</span>
+        <span>a landing page <span class="marker">over lunch</span>.</span>
+        <span>a demo <span class="marker">by the deadline</span>.</span>
+      </span></span>
+    </h1>
+    <p class="lede">Set the timer. One skill gives your agent a clock, one locked deliverable, and a gate that says no to everything else until a stranger can click a URL. The Habitat night, inside the editor you already build with.</p>
+    <p class="agents">Works in <span class="mention m-graphite">Claude Code</span> <span class="mention m-graphite">Codex</span> <span class="mention m-graphite">Cursor</span> <span class="mention m-graphite">Gemini CLI</span> <span class="mention m-graphite">OpenCode</span> and any agent that reads a SKILL.md.</p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="#setup">Set up the bunny<svg><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-secondary" href="#film">Watch a 2-hour sprint</a>
+    </div>
+    <p class="stats"><span class="mention m-green"><i></i>600+ people</span> · <span class="mention m-blue"><i></i>200+ MVPs</span> · <span class="mention m-graphite"><i></i>8 cities</span> · <span class="mention m-olive"><i></i>4 countries</span> · free, open source, local</p>
+
+    <div class="frame" id="film">
+      <img class="hills" src="images/mascot/hills.jpg" alt="Rolling green hills under a blue sky" width="1677" height="938">
+      <div class="shade" aria-hidden="true"></div>
+      <div class="stage">
+        <div class="film" id="filmcard" aria-label="A habitat-bunny sprint, replayed">
+          <div class="strip"><span class="p">›</span><span id="typed"></span><span class="cur"></span><span class="reply" id="reply"></span></div>
+          <div class="film-body">
+            <table>
+              <thead><tr><th class="c0">#</th><th class="c1">Hop</th><th class="c2">What happened</th><th class="c3">Gate</th></tr></thead>
+              <tbody id="rows"></tbody>
+            </table>
+            <aside class="board">
+              <div class="bt" id="bt">sprint · solo · 2h</div>
+              <div class="brow" id="b-lock"><span class="n">lock</span><span class="t">18m</span><span class="s">waiting</span></div>
+              <div class="brow" id="b-build"><span class="n">build</span><span class="t">1h 12m</span><span class="s">waiting</span></div>
+              <div class="brow" id="b-ship"><span class="n">ship</span><span class="t">18m</span><span class="s">waiting</span></div>
+              <div class="brow" id="b-roast"><span class="n">roast</span><span class="t">12m</span><span class="s">waiting</span></div>
+              <div class="badge" id="badge">a prompt is a suggestion · a gate is a no</div>
+            </aside>
+          </div>
+          <div class="film-foot"><span id="status">the timer has not started</span><span class="meter" id="meter">2:00:00</span></div>
+        </div>
+      </div>
+      <div class="doodles" aria-hidden="true">
+        <img src="brand/doodle-karate.svg" alt="" width="140" height="220">
+        <img src="brand/doodle-magnify.svg" alt="" width="140" height="220">
+      </div>
+    </div>
+    <p class="caption">Two hours, replayed live · every hop gated · nothing leaves your machine</p>
+  </div>
+</section>
+
+<section id="focus" class="bg-card">
+  <div class="wrap pad">
+    <div class="intro">
+      <div class="max">
+        <p class="eyebrow"><svg><use href="#i-clock"/></svg>Why a timer</p>
+        <h2 class="display">Focus is a container, not a <span class="marker">trait</span>.</h2>
+        <p class="lede">If you do your best work when a clock is running and someone is waiting to see the result (hi, ADHD brains), this is that container, taken from 200+ Habitat nights and put inside your agent. You pick the timer. The bunny does the rest.</p>
+        <p class="fine" style="margin-top:1rem">2 hours · 45 minutes · an evening · a hackathon deadline. Any window works.</p>
+      </div>
+      <img class="mascot" src="images/mascot/bunny-sm.png" alt="The Habitat bunny" width="320" height="320">
+    </div>
+    <div class="rows">
+      <div class="row">
+        <div><p class="k">01</p><h3 class="display">One deliverable</h3><p class="k k2">One sentence a friend can repeat</p></div>
+        <p>You lock one sentence. Everything else that comes up mid-build is parked in <span class="mention m-olive">backlog.md</span>, not lost. The backlog remembers so you do not have to.</p>
+      </div>
+      <div class="row">
+        <div><p class="k">02</p><h3 class="display">A clock that talks</h3><p class="k k2">Four hops, one window</p></div>
+        <p>The bunny splits your window into lock, build, ship and roast, and speaks up when you drift or go quiet. "Behind pace" is a fact, not a feeling.</p>
+      </div>
+      <div class="row">
+        <div><p class="k">03</p><h3 class="display">Done is a URL</h3><p class="k k2">localhost does not count</p></div>
+        <p>Not "almost", not a demo on your machine. When the timer ends, either a stranger can click it or it did not ship. Then the roast says what was true, and what one move comes next.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap pad">
+    <div class="max" style="max-width:42rem">
+      <p class="eyebrow"><svg><use href="#i-bunny-face"/></svg>One skill, every hop</p>
+      <h2 class="display">One skill. Every <span class="marker">hop</span>.</h2>
+      <p class="lede">Say it in plain words. The agent builds, the bunny paces, and the gate says no where a prompt would have said sure. Each card is one thing you can say mid-build and what happens next.</p>
+    </div>
+    <div class="grid">
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>grill me<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st q" style="--d:300"><b>Who exactly,</b> and where do you find 10 of them this week?</div>
+          <div class="st row2" style="--d:1300"><span class="strike">"developers"</span><span class="mention m-clay">✕ gate 2: ICP</span></div>
+          <div class="st row2" style="--d:2500"><span>indie iOS devs who got a review rejection this month</span><span class="mention m-green">✓</span></div>
+          <div class="st q" style="--d:3500">Next: <b>one sentence</b> a friend can repeat back.</div>
+        </div>
+        <div class="uc-foot">grilling · one question at a time</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>can we add dark mode?<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st q" style="--d:300">Is dark mode in the locked one-liner?</div>
+          <div class="st row2" style="--d:1400"><span>no</span><span class="mention m-olive">→ .habitat/backlog.md</span></div>
+          <div class="st q" style="--d:2500">Parked. <b>Not forgotten. Not tonight.</b></div>
+          <div class="st row2" style="--d:3500"><span class="fine" style="font-size:12.5px">build hop · 48m left</span><span class="mention m-graphite">back to the one-liner</span></div>
+        </div>
+        <div class="uc-foot">check-scope · parked, not built</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>picasso this sentence<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st row2" style="--d:300"><span class="fine" style="font-size:12.5px">We help modern app teams easily fix their App Store rejections faster with AI.</span><span class="mention m-graphite">state 1</span></div>
+          <div class="st row2" style="--d:1300"><span class="fine" style="font-size:12.5px">Fix your App Store rejection faster.</span><span class="mention m-graphite">state 2</span></div>
+          <div class="st q" style="--d:2400"><b>Paste your rejection. Get the fix.</b></div>
+          <div class="st row2" style="--d:3500"><span class="fine" style="font-size:12.5px">14 words → 6 · nothing lost</span><span class="mention m-green">state 3 · the bull</span></div>
+        </div>
+        <div class="uc-foot">picasso · delete, check, delete</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>ship localhost:3000<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st row2" style="--d:300"><span>http://localhost:3000</span><span class="mention m-clay">✕ refused</span></div>
+          <div class="st q" style="--d:1300">A stranger cannot click that. <b>Deploy it.</b></div>
+          <div class="st row2" style="--d:2600"><span>https://review-fix.vercel.app</span><span class="mention m-green">✓ live</span></div>
+          <div class="st q" style="--d:3600">Recorded in <b>ships.md</b>. Next hop: roast.</div>
+        </div>
+        <div class="uc-foot">ship · a URL a stranger can click</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>roast it<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st row2" style="--d:300"><span>Idea · sharp person, sharp moment</span><span class="mention m-green">strong</span></div>
+          <div class="st row2" style="--d:1100"><span>Product · proves the one-liner in 10s</span><span class="mention m-graphite">ok</span></div>
+          <div class="st row2" style="--d:1900"><span>Potential · would a stranger ask to try it?</span><span class="mention m-clay">weakest</span></div>
+          <div class="st q" style="--d:3000">Tomorrow, 30 min: put the paste box above the fold. <b>Then DM 3 iOS devs.</b></div>
+        </div>
+        <div class="uc-foot">roast · promise vs artifact</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span><span style="color:var(--muted-foreground)">(quiet for 20 minutes)</span><span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st row2" style="--d:300"><span class="fine" style="font-size:12.5px">build hop · 0:41:00 left</span><span class="mention m-graphite">clock</span></div>
+          <div class="st q" style="--d:1300">You went quiet. <b>What is the next commit?</b></div>
+          <div class="st q" style="--d:2500">Behind pace. Cut one thing from the flow, not from the deploy.</div>
+          <div class="st row2" style="--d:3500"><span>ship hop opens in 41m</span><span class="mention m-green">on it</span></div>
+        </div>
+        <div class="uc-foot">pace · the clock talks when you do not</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>/today<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st q" style="--d:300">No evening, no container. <b>One sentence for today.</b></div>
+          <div class="st row2" style="--d:1400"><span class="strike">"work on the onboarding"</span><span class="mention m-clay">mush</span></div>
+          <div class="st row2" style="--d:2500"><span>new users see their first result without signing up</span><span class="mention m-green">✓</span></div>
+          <div class="st q" style="--d:3500">Take that sentence to a URL <b>before you stop.</b></div>
+        </div>
+        <div class="uc-foot">today · one hop, already mid-build</div>
+      </div>
+
+      <div class="card uc" data-uc>
+        <div class="strip"><span class="p">›</span>we're at a hackathon<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="st q" style="--d:300">Paste the brief: theme, rules, deadline, judging.</div>
+          <div class="st row2" style="--d:1400"><span>clock</span><span class="mention m-graphite">= submission deadline 21:00</span></div>
+          <div class="st row2" style="--d:2200"><span>grill</span><span class="mention m-graphite">= fit against the theme</span></div>
+          <div class="st row2" style="--d:3000"><span>roast</span><span class="mention m-green">= the judging criteria</span></div>
+        </div>
+        <div class="uc-foot">event mode · one line for every participant</div>
+      </div>
+
+      <div class="card uc dark" data-uc>
+        <div class="strip"><span class="p">›</span>and the gate underneath<span class="cur"></span></div>
+        <div class="uc-body">
+          <div class="big display">8 MCP tools</div>
+          <div class="ticker"><ul>
+            <li><b>lock_idea</b> · rejects a vague ICP</li>
+            <li><b>ship</b> · refuses localhost</li>
+            <li><b>next_hop</b> · will not skip a hop</li>
+            <li><b>check_scope</b> · parks it in backlog.md</li>
+            <li><b>sprint_status</b> · on pace · behind · overtime</li>
+            <li><b>start_sprint</b> · solo · team · event · any hours</li>
+            <li><b>roast</b> · rubric, event addendum</li>
+            <li><b>ship_log</b> · everything that hit a URL</li>
+            <li><b>lock_idea</b> · rejects a vague ICP</li>
+            <li><b>ship</b> · refuses localhost</li>
+            <li><b>next_hop</b> · will not skip a hop</li>
+            <li><b>check_scope</b> · parks it in backlog.md</li>
+            <li><b>sprint_status</b> · on pace · behind · overtime</li>
+            <li><b>start_sprint</b> · solo · team · event · any hours</li>
+            <li><b>roast</b> · rubric, event addendum</li>
+            <li><b>ship_log</b> · everything that hit a URL</li>
+          </ul></div>
+        </div>
+        <div class="uc-foot">local MCP · no account · no API key · <a href="https://www.npmjs.com/package/habitat-bunny" target="_blank" rel="noreferrer">npm →</a></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="container" class="bg-muted">
+  <div class="wrap pad">
+    <div class="max" style="max-width:42rem">
+      <p class="eyebrow"><svg><use href="#i-sparkle"/></svg>Why it works</p>
+      <h2 class="display">The container, not the advice.</h2>
+      <p class="lede">AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever. At Habitat nights the magic was never the advice. It was a timer, a locked scope, and a room waiting to see what you made.</p>
+    </div>
+    <div class="duel" data-reveal>
+      <div class="card dcard">
+        <p class="k">agent alone</p>
+        <h3 class="display">Still building.</h3>
+        <div class="track"><div class="seg forever">one more feature · one more refactor · never a URL</div></div>
+        <p class="dn">Infinitely agreeable. <b>Says yes to dark mode.</b> Calls localhost a demo.</p>
+      </div>
+      <div class="card dcard">
+        <p class="k">agent + bunny</p>
+        <h3 class="display">A URL when the timer ends.</h3>
+        <div class="track"><div class="seg lock">lock</div><div class="seg build">build</div><div class="seg ship">ship</div><div class="seg roast">roast</div></div>
+        <p class="dn">Four hops, one clock. <b>Says no to dark mode.</b> Refuses localhost.</p>
+      </div>
+    </div>
+    <div class="photo-card">
+      <img src="images/mascot/burrow-aerial.jpg" alt="" width="2200" height="1228">
+      <div class="ov"></div>
+      <div class="txt">
+        <p class="k">The burrow</p>
+        <h3 class="display">Always one hop ahead.</h3>
+        <p>Everything the bunny knows lives in <span class="mention m-graphite">.habitat/</span> next to your code: the sprint, the backlog, the ship log. Human-readable markdown. Delete the folder and the bunny forgets everything.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="price" class="bg-card" style="border-bottom:0">
+  <div class="wrap pad" style="padding-bottom:3rem">
+    <div class="max" style="max-width:42rem">
+      <p class="eyebrow"><svg><use href="#i-smile"/></svg>What it costs</p>
+      <h2 class="display">No cohort. No retainer. No equity.</h2>
+      <p class="lede">The ritual that made 200+ people ship in one evening is a set of markdown files and a tiny local server. It runs where your agent already runs, and it does not phone home.</p>
+    </div>
+    <div class="bill-wrap" data-reveal>
+      <div class="card bill">
+        <p class="k">what "someone who keeps you honest" usually costs</p>
+        <ul>
+          <li style="--i:0"><span>Founder coach</span><span>$300 / hr</span></li>
+          <li style="--i:1"><span>Startup cohort</span><span>$2,500</span></li>
+          <li style="--i:2"><span>Accelerator</span><span>7% equity</span></li>
+          <li style="--i:3"><span>Accountability app</span><span>$19 / mo</span></li>
+          <li style="--i:4"><span>Hackathon mentor</span><span>fully booked</span></li>
+          <li style="--i:5"><span>A system prompt that says "be strict"</span><span>ignored by hop 2</span></li>
+        </ul>
+      </div>
+      <div class="card with">
+        <p class="k">with habitat-bunny</p>
+        <div class="price display"><span class="marker">$0</span></div>
+        <p class="per">free · MIT · local</p>
+        <p class="fine">No backend, no account, no API key. Nothing leaves your machine.</p>
+      </div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true"><path d="M0 110 L0 74 C 200 30 420 18 640 52 C 900 92 1180 80 1440 24 L1440 110 Z" fill="var(--brand-deep)" opacity="0.35"/><path d="M0 110 L0 92 C 260 40 520 34 780 66 C 1020 94 1240 88 1440 48 L1440 110 Z" fill="var(--brand-deep)"/></svg>
+</section>
+
+<section id="organizers" class="band">
+  <div class="wrap pad">
+    <div class="max" style="max-width:42rem">
+      <p class="eyebrow"><svg><use href="#i-flag"/></svg>Event mode · for organizers</p>
+      <h2 class="display">Run your whole hackathon on a tool every participant installs in one line.</h2>
+      <p class="lede">Tell the bunny you are at an event and paste the brief. From then on the ritual bends to your event, not the other way around.</p>
+    </div>
+    <div class="glass">
+      <div class="gcard"><h3 class="display">The clock is the deadline.</h3><p>Not four hours from now. The real submission time, split into hops that end before it.</p></div>
+      <div class="gcard"><h3 class="display">The grill checks the theme.</h3><p>Ideas get locked against the brief, so nobody spends the night on something the judges cannot score.</p></div>
+      <div class="gcard"><h3 class="display">Ship checks the requirements.</h3><p>Repo link, demo video, team slide: the ship hop refuses to close until every submission item is there.</p></div>
+      <div class="gcard"><h3 class="display">The roast uses your rubric.</h3><p>Impact, feasibility, demo, originality: whatever your criteria are, the roast scores against them, honestly.</p></div>
+      <div class="gcard wide" aria-hidden="true">
+        <div class="l"><span class="k">brief</span><span>"we're at the climate hackathon, here's the brief" · reading theme, rules, deadline, judging</span></div>
+        <div class="l"><span class="k">mode</span><span>event · <span class="ok">Climate Build Night</span></span></div>
+        <div class="l"><span class="k">clock</span><span>submission <span class="ok">Sat 21:00</span> · 5h 40m left</span></div>
+        <div class="l"><span class="k">gate</span><span><span class="no">✕</span> "an app for everyone who cares about climate" · gate 2: ICP</span></div>
+        <div class="l"><span class="k">gate</span><span><span class="ok">✓</span> "building managers in Berlin who get fined for heating waste"</span></div>
+        <div class="l"><span class="k">hop</span><span>build · 4h 50m · the clock is the boss</span></div>
+      </div>
+    </div>
+    <div class="ctas">
+      <a class="btn btn-light" href="mailto:ycanerden@gmail.com?subject=habitat-bunny%20at%20our%20event">Talk to us about your event<svg><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-ghost" href="https://lu.ma/habitat" target="_blank" rel="noreferrer">Come to a Habitat night</a>
+    </div>
+  </div>
+</section>
+
+<section id="setup">
+  <div class="wrap pad" style="text-align:center">
+    <p class="eyebrow center"><svg><use href="#i-carrot"/></svg>Set up</p>
+    <h2 class="display" style="max-width:40rem;margin-left:auto;margin-right:auto">Give your agent a <span class="marker">timer</span>.</h2>
+    <p class="lede" style="max-width:36rem;margin-left:auto;margin-right:auto">Paste one line into the agent you already build with. It reads the setup notes, installs the skills, runs /setup-habitat, and hands you back three things to try. Then name a timer and one deliverable.</p>
+
+    <div class="cmdcard">
+      <div class="box"><span class="d">$</span><span>set up habitat-bunny — <span class="u">github.com/ycanerden/habitat-bunny/blob/main/llms.txt</span></span><button class="btn btn-secondary btn-sm" id="copy" data-text="set up habitat-bunny — github.com/ycanerden/habitat-bunny/blob/main/llms.txt">copy</button></div>
+      <p class="note"><b>What happens:</b> the agent picks the skill route for your editor, never installs both, runs <b>/setup-habitat</b> once in your repo, and asks before adding the optional MCP gate. Nothing is sent anywhere. Then say <b>"ship sprint, 2 hours, one feature"</b>.</p>
+    </div>
+
+    <div class="routes">
+      <div class="card route">
+        <div class="rt"><h3>Claude Code</h3><span>plugin</span></div>
+        <p>A managed bundle of exactly the promoted skills. Type both lines.</p>
+<code class="block">/plugin marketplace add ycanerden/habitat-bunny
+/plugin install habitat-bunny</code>
+      </div>
+      <div class="card route">
+        <div class="rt"><h3>Codex, Cursor, others</h3><span>skills.sh</span></div>
+        <p>Writes files you own and edit. Keep <span class="mention m-graphite">setup-habitat</span> selected.</p>
+<code class="block">npx skills@latest add ycanerden/habitat-bunny</code>
+      </div>
+      <div class="card route">
+        <div class="rt"><h3>The MCP gate</h3><span>optional</span></div>
+        <p>Makes the no a tool, not a suggestion. Sits next to either route.</p>
+<code class="block"><span class="c"># Claude Code</span>
+claude mcp add habitat-bunny -- npx -y habitat-bunny</code>
+      </div>
+    </div>
+    <p class="fine exclusive">The two skill routes are exclusive: pick one. Then run /setup-habitat once per repo. <a class="textlink" href="cursor://anysphere.cursor-deeplink/mcp/install?name=habitat-bunny&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImhhYml0YXQtYnVubnkiXX0=">Add the gate to Cursor<svg><use href="#i-arrow-up"/></svg></a></p>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="wrap pad">
+    <div class="trio" aria-hidden="true">
+      <svg><use href="#i-carrot"/></svg>
+      <svg class="big"><use href="#i-bunny-face"/></svg>
+      <svg><use href="#i-sparkle"/></svg>
+    </div>
+    <h2 class="display">One hop at a time.</h2>
+    <p class="lede">Set the timer, lock the sentence, ship the URL, take the roast. Then do it again tomorrow. That is the whole ritual, and it fits in the editor you already have open.</p>
+    <div class="ctas">
+      <a class="btn btn-light btn-lg" href="#setup">Set up the bunny<svg><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-ghost btn-lg" href="https://lu.ma/habitat" target="_blank" rel="noreferrer">Join the next Habitat night</a>
+    </div>
+    <p class="small">Want a Habitat night at your company or in your city? <a href="mailto:ycanerden@gmail.com">Get in touch</a></p>
+    <p class="stats"><span class="mention m-green"><i></i>600+ people</span> · <span class="mention m-blue"><i></i>200+ MVPs</span> · <span class="mention m-graphite"><i></i>8 cities</span> · <span class="mention m-olive"><i></i>4 countries</span></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap-wide cols">
+    <div class="fb">
+      <a class="lockup" href="https://habitat.md" target="_blank" rel="noreferrer">
+        <svg viewBox="0 0 123 114" fill="currentColor" aria-hidden="true"><use href="#i-logomark"/></svg>
+        <span class="display word">Habitat</span>
+      </a>
+      <p>habitat-bunny is the Habitat night as a skill and a local MCP gate. Your agent writes the code; the bunny keeps the clock honest. MIT, no backend, no account, nothing leaves your machine.</p>
+      <p>Built by Habitat: public AI events across Europe, and a private community of founders who keep building.</p>
+    </div>
+    <div><h4>Use</h4><ul>
+      <li><a href="#film">The sprint</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#setup">Set up</a></li>
+      <li><a href="https://github.com/ycanerden/habitat-bunny/blob/main/llms.txt" target="_blank" rel="noreferrer">llms.txt</a></li>
+      <li><a href="https://github.com/ycanerden/habitat-bunny/blob/main/SHIPS.md" target="_blank" rel="noreferrer">Ship wall</a></li>
+    </ul></div>
+    <div><h4>Habitat</h4><ul>
+      <li><a href="https://habitat.md" target="_blank" rel="noreferrer">habitat.md</a></li>
+      <li><a href="https://lu.ma/habitat" target="_blank" rel="noreferrer">Events</a></li>
+      <li><a href="https://github.com/ycanerden/habitat-bunny" target="_blank" rel="noreferrer">GitHub</a></li>
+      <li><a href="https://www.npmjs.com/package/habitat-bunny" target="_blank" rel="noreferrer">npm</a></li>
+      <li><a href="mailto:ycanerden@gmail.com">Get in touch</a></li>
+    </ul></div>
+  </div>
+  <div class="wrap-wide copyright"><span>© 2026 Habitat. One hop at a time.</span><span>MIT · no backend · no account · no API keys</span></div>
+</footer>
+
+<div id="walker-root" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // rotating headline slots (agent, deliverable) tick together
+  const slots = [...document.querySelectorAll('[data-slot]')].map(el => ({ el, items: [...el.children] })); let si = 0;
+  const narrow = matchMedia('(max-width:1023px)');
+  const fitSlots = () => slots.forEach(s => {
+    const r = s.items[si].getBoundingClientRect();
+    if (narrow.matches) { s.el.style.width = ''; s.el.style.height = r.height + 'px'; }
+    else { s.el.style.height = ''; s.el.style.width = r.width + 'px'; }
+  });
+  document.fonts?.ready.then(fitSlots); fitSlots(); addEventListener('resize', fitSlots);
+  if (!reduce) setInterval(() => {
+    const prev = si; si = (si + 1) % slots[0].items.length;
+    slots.forEach(s => { s.items[prev].classList.remove('on'); s.items[prev].classList.add('off'); s.items[si].classList.remove('off'); s.items[si].classList.add('on'); });
+    fitSlots();
+    setTimeout(() => slots.forEach(s => s.items[prev].classList.remove('off')), 450);
+  }, 3000);
+
+  // copy
+  const copy = $('#copy');
+  copy.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(copy.dataset.text); } catch {}
+    copy.textContent = 'copied';
+    setTimeout(() => { copy.textContent = 'copy'; }, 1600);
+  });
+
+  // reveal (duel, bill)
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: .35 });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+  // use-case cards loop only while visible
+  const uio = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('on', e.isIntersecting)), { threshold: .3 });
+  document.querySelectorAll('[data-uc]').forEach(el => uio.observe(el));
+
+  // ---- the bunny walker (habitat.md) ----
+  const root = $('#walker-root'); let walking = false, cooldownUntil = 0, walkTimer = null;
+  const walk = () => {
+    if (reduce) return; const now = Date.now();
+    if (walking || now < cooldownUntil) return;
+    walking = true;
+    root.innerHTML = `<div class="bunny-walker" role="presentation"><div class="bunny-walker-actor"><div class="bunny-walker-hop">
+      <div class="bunny-prop bunny-prop-book"><svg width="56" height="44" viewBox="0 0 56 44" fill="var(--card)" stroke="var(--foreground)" stroke-width="2.5" stroke-linejoin="round"><path d="M4 8 C 12 4, 22 5, 28 10 L 28 40 C 22 35, 12 34, 4 38 Z"/><path d="M52 8 C 44 4, 34 5, 28 10 L 28 40 C 34 35, 44 34, 52 38 Z"/><path d="M10 16 C 15 14, 20 15, 24 17" fill="none"/><path d="M10 23 C 15 21, 20 22, 24 24" fill="none"/><path d="M32 17 C 36 15, 41 14, 46 16" fill="none"/><path d="M32 24 C 36 22, 41 21, 46 23" fill="none"/></svg></div>
+      <img src="images/mascot/bunny-sm.png" width="320" height="320" class="bunny-walker-face" alt="">
+      <div class="bunny-prop bunny-prop-coffee"><img src="brand/doodle-coffee.svg" alt=""></div>
+      <p class="bunny-say bunny-say-read">lock the idea first</p>
+      <p class="bunny-say bunny-say-prep">localhost is not shipped</p>
+    </div><span class="bunny-walker-shadow"></span></div></div>`;
+    clearTimeout(walkTimer);
+    walkTimer = setTimeout(() => { root.innerHTML = ''; walking = false; cooldownUntil = Date.now() + 2500; }, 7000);
+  };
+  const lockup = $('#lockup'); lockup.addEventListener('mouseenter', walk); lockup.addEventListener('focus', walk);
+  setTimeout(walk, 700);
+
+  // ---- the film ----
+  const typed = $('#typed'), reply = $('#reply'), rows = $('#rows'), status = $('#status'), meter = $('#meter'), badge = $('#badge'), bt = $('#bt');
+  const board = { lock: $('#b-lock'), build: $('#b-build'), ship: $('#b-ship'), roast: $('#b-roast') };
+  const ROWS = 8;
+  const script = [
+    { hop: 'lock',  what: 'ICP: "developers"',                                         gate: '✕ rejected · gate 2',  cls: 'm-clay' },
+    { hop: 'lock',  what: 'ICP: indie iOS devs who got a review rejection this month', gate: '✓ specific',            cls: 'm-green' },
+    { hop: 'lock',  what: 'one-liner: paste your rejection note, get the fix',         gate: '✓ a friend can repeat', cls: 'm-green' },
+    { hop: 'lock',  what: 'out of scope: auth · payments · settings',                  gate: '✓ locked',              cls: 'm-green' },
+    { hop: 'build', what: '"can we add dark mode?"',                                    gate: '→ backlog.md',          cls: 'm-olive' },
+    { hop: 'ship',  what: 'http://localhost:3000',                                     gate: '✕ refused',             cls: 'm-clay' },
+    { hop: 'ship',  what: 'https://review-fix.vercel.app',                             gate: '✓ live',                cls: 'm-green' },
+    { hop: 'roast', what: 'promise vs artifact · weakest: potential',                  gate: 'next: DM 3 iOS devs',   cls: 'm-graphite' },
+  ];
+
+  let clockSec = 2 * 3600, clockTimer = null, running = false, visible = false, gen = 0;
+  const fmt = (s) => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return `${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`; };
+  const setClock = (s) => { clockSec = s; meter.textContent = fmt(s); };
+  const stopClock = () => { if (clockTimer) clearInterval(clockTimer); clockTimer = null; };
+  const runClock = (perTick) => { stopClock(); clockTimer = setInterval(() => setClock(clockSec - perTick), 1000); };
+
+  function blankRows() {
+    rows.innerHTML = '';
+    for (let i = 0; i < ROWS; i++) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i + 1}</td><td class="empty"><span></span></td><td class="empty"><span></span></td><td class="empty"><span></span></td>`;
+      rows.appendChild(tr);
+    }
+  }
+  function fillRow(i) {
+    const r = script[i], tr = rows.children[i]; if (!tr) return;
+    const tds = tr.children;
+    tds[1].className = ''; tds[1].innerHTML = `<span class="hop">${r.hop}</span>`;
+    tds[2].className = ''; tds[2].innerHTML = `<span>${r.what}</span>`;
+    tds[3].className = ''; tds[3].innerHTML = `<span class="gate"><span class="mention ${r.cls}">${r.gate}</span></span>`;
+    requestAnimationFrame(() => tr.classList.add('in'));
+  }
+  function setBoard(now, doneList) {
+    for (const k in board) { const b = board[k], s = b.querySelector('.s'); b.classList.remove('now', 'done');
+      if (doneList.includes(k)) { b.classList.add('done'); s.textContent = 'done'; }
+      else if (k === now) { b.classList.add('now'); s.textContent = 'now'; }
+      else s.textContent = 'waiting'; }
+  }
+  async function type(text, g) {
+    typed.textContent = ''; reply.classList.remove('on');
+    for (const ch of text) { if (g !== gen) return; typed.textContent += ch; await sleep(32); }
+  }
+  async function say(text, g) { if (g !== gen) return; reply.textContent = text; reply.classList.add('on'); }
+  const wait = async (ms, g) => { await sleep(ms); return g === gen; };
+
+  function finalState() {
+    blankRows(); for (let i = 0; i < script.length; i++) fillRow(i);
+    rows.querySelectorAll('tr').forEach(tr => tr.classList.add('in'));
+    typed.textContent = 'roast'; say('↩ shipped · 1 parked · 1 refused · ship log written', gen);
+    setBoard(null, ['lock', 'build', 'ship', 'roast']); setClock(23 * 60 + 40);
+    status.textContent = 'two hours · one URL · ships.md updated'; badge.textContent = 'shipped beats perfect';
+  }
+
+  async function play() {
+    if (running) return; running = true; const g = ++gen;
+    blankRows(); setBoard(null, []); setClock(2 * 3600); stopClock();
+    status.textContent = 'the timer has not started'; badge.textContent = 'a prompt is a suggestion · a gate is a no'; bt.textContent = 'sprint · solo · 2h';
+    reply.classList.remove('on'); typed.textContent = '';
+    function done() { stopClock(); running = false; if (visible && g === gen && !reduce) play(); }
+
+    if (!await wait(600, g)) return done();
+    await type("ship sprint, 2 hours, one feature", g);
+    if (!await wait(500, g)) return done();
+    await say('↩ timer set · 2h · hop: lock (18m)', g); setBoard('lock', []); runClock(6); status.textContent = 'lock hop · one question at a time · no compliments';
+    if (!await wait(1400, g)) return done();
+    await type('the ICP is developers', g); if (!await wait(400, g)) return done();
+    fillRow(0); await say('↩ gate 2: too vague. where do you find 10 this week?', g);
+    if (!await wait(1700, g)) return done();
+    await type('indie iOS devs who got a review rejection this month', g); if (!await wait(400, g)) return done();
+    fillRow(1); await say('↩ specific. now one sentence a friend can repeat', g);
+    if (!await wait(1500, g)) return done();
+    await type('paste your rejection note, get the fix', g); if (!await wait(400, g)) return done();
+    fillRow(2); if (!await wait(600, g)) return done(); fillRow(3);
+    await say('↩ locked · hop: build (1h 12m)', g); setBoard('build', ['lock']); runClock(420); status.textContent = 'build hop · only the locked one-liner · the clock is the boss';
+    if (!await wait(2000, g)) return done();
+    await type('can we add dark mode?', g); if (!await wait(400, g)) return done();
+    fillRow(4); await say('↩ parked → .habitat/backlog.md · not tonight', g);
+    if (!await wait(1800, g)) return done();
+    await type('ship localhost:3000', g); if (!await wait(400, g)) return done();
+    setBoard('ship', ['lock', 'build']); runClock(20); status.textContent = 'ship hop · a URL a stranger can click';
+    fillRow(5); await say('↩ refused · a stranger cannot click that. deploy it', g);
+    if (!await wait(1800, g)) return done();
+    await type('ship https://review-fix.vercel.app', g); if (!await wait(400, g)) return done();
+    fillRow(6); await say('↩ live · recorded in ships.md · hop: roast (12m)', g); setBoard('roast', ['lock', 'build', 'ship']); runClock(10); status.textContent = 'roast hop · promise vs artifact';
+    if (!await wait(1800, g)) return done();
+    await type('roast', g); if (!await wait(500, g)) return done();
+    fillRow(7); await say('↩ shipped · 1 parked · 1 refused · ship log written', g); setBoard(null, ['lock', 'build', 'ship', 'roast']); stopClock();
+    status.textContent = 'two hours · one URL · ships.md updated'; badge.textContent = 'shipped beats perfect';
+    await wait(4200, g);
+    done();
+  }
+
+  if (reduce) { finalState(); }
+  else {
+    const fio = new IntersectionObserver(es => es.forEach(e => { visible = e.isIntersecting; if (visible && !running) play(); if (!visible) { gen++; running = false; stopClock(); } }), { threshold: .3 });
+    fio.observe($('#filmcard'));
+    blankRows();
+  }
+})();
+</script>
+</body>
+</html>
