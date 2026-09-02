@@ -2,7 +2,9 @@
 
 Everything below is prepared; the steps marked (you) need the npm account owner, a domain, or the Habitat social accounts.
 
-The launch format is borrowed from treg's "Claude for people search" (treg.to/people-search, 1 Sep 2026): one job in the headline, the agent's name in the slot, a self-playing film of the tool doing the job, a struck-through bill of what people pay today, and a paste-a-prompt install. Ours is "Claude Code for shipping tonight". Same shape, our ritual.
+The launch format is borrowed from treg's "Claude for people search" (treg.to/people-search, 1 Sep 2026): one job in the headline, the agent's name in the slot, a self-playing film of the tool doing the job, a struck-through bill of what people pay today, and a paste-a-prompt install. Ours is "Claude Code for shipping a feature in 2 hours". Same shape, our ritual.
+
+The angle is focus, not the evening. The bunny is a timer plus one locked deliverable plus a gate that says no. The page says this plainly for people who work best under a running clock (ADHD brains included) without making a medical claim: "built for brains that focus best when the clock is running" is the line, keep it at that.
 
 ## 1. Publish to npm (you)
 
@@ -66,11 +68,11 @@ Sequence that worked for comparable launches (research: community first, receipt
 Same skeleton treg used. One job, one number, one claim, one link, repo in the first reply.
 
 ```
-Introducing Claude Code for shipping tonight
+Introducing Claude Code for shipping a feature in 2 hours
 
-No more $2,500 cohorts, just one evening
+No more $2,500 cohorts, just a timer
 
-Claude Code now runs the Habitat night: grill the idea, lock the scope, keep the clock, refuse localhost, roast what shipped
+Set 2 hours. Lock one deliverable. Claude Code now says no to everything else until a stranger can click a URL
 
 200+ MVPs shipped this way, 8 cities
 Fully open source, nothing leaves your machine
@@ -81,11 +83,12 @@ Git repo below 👇
 
 First reply: `Open source here: https://github.com/ycanerden/habitat-bunny`
 
-Variants for the same page, one per week, swapping the job and the agent in the slot:
+Variants for the same page, one per week, swapping the deliverable, the timer, and the agent in the slot:
 
 - "Introducing Codex for winning a hackathon": event mode, the clock is the deadline, the roast is the judging rubric.
-- "Introducing Cursor for finishing": `/today`, one sentence to a URL before you stop.
-- "Introducing Claude Code for saying no": `check_scope`, the backlog, the localhost refusal.
+- "Introducing Cursor for fixing one bug in 45 minutes": `/today`, one sentence to a URL before you stop.
+- "Introducing Claude Code for ADHD builders": the timer, the parked backlog, the localhost refusal. The focus angle, said directly.
+- "Introducing Gemini CLI for shipping an MVP in one evening": the original Habitat night.
 
 ### Luma / community email
 
@@ -93,7 +96,7 @@ Subject: the Habitat night now fits in your editor
 
 We turned the Habitat sprint into a skill. It is called habitat-bunny and it runs inside Claude Code, Codex, Cursor, or whatever you build with.
 
-Your AI builds. The bunny keeps the clock, grills your idea before you build it, parks your scope creep, and does not let you stop before there is a URL a stranger can click. Same ritual as our evenings: lock, build, ship, roast.
+Your AI builds. You set the timer (2 hours, an evening, whatever you have). The bunny grills your idea before you build it, parks your scope creep, and does not let you stop before there is a URL a stranger can click. Same ritual as our evenings: lock, build, ship, roast.
 
 Free, open source, nothing leaves your machine. Paste this into your agent:
 

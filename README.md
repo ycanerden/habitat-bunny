@@ -5,9 +5,9 @@
 [![habitat.md](https://img.shields.io/badge/habitat.md-always%20one%20hop%20ahead-5CAE30)](https://habitat.md)
 [![skills.sh](https://skills.sh/b/ycanerden/habitat-bunny)](https://skills.sh/ycanerden/habitat-bunny)
 
-**Claude Code for shipping tonight.** Also Codex, Cursor, Gemini CLI, OpenCode: any agent that reads a SKILL.md. The Habitat night, inside the editor you already build with.
+**Claude Code for shipping a feature in 2 hours.** Also Codex, Cursor, Gemini CLI, OpenCode: any agent that reads a SKILL.md. Set a timer, lock one deliverable, and the bunny says no to everything else until a stranger can click a URL. The Habitat night, inside the editor you already build with.
 
-Your agent writes the code. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and will not call it shipped until a stranger can click a URL.
+Your agent writes the code. The bunny does the one thing agents refuse to do: it keeps the clock honest, gates scope creep, grills your idea before you build it, and will not call it shipped until a stranger can click a URL. If you focus best when a clock is running, this is the container.
 
 No backend. No account. No API keys. Nothing leaves your machine.
 
@@ -60,7 +60,7 @@ Once per repo. It writes the burrow (`.habitat/`) and asks how you sprint.
 claude mcp add habitat-bunny -- npx -y habitat-bunny
 ```
 
-Then say: `let's do a ship sprint`. Or type `/today` if you are already mid-build and lost.
+Then say: `ship sprint, 2 hours, one feature`. Or type `/today` if you are already mid-build and lost.
 
 Built by [Habitat](https://habitat.md): 600+ people, 200+ MVPs, 8 cities, 4 countries. Hover the bunny on the site. It walks.
 
@@ -83,7 +83,7 @@ A prompt cannot hold state across Cursor and Claude Code. The bunny can: it is j
 
 ## How a sprint works
 
-Four hops, one clock. Default window is one evening (4 hours).
+Four hops, one clock. Name any timer: 2 hours, 45 minutes, a hackathon deadline. Default is one evening (4 hours).
 
 1. **Lock the idea.** One question at a time, no compliments. Four gates: a specific problem, an ICP you could find 10 of this week, a one-liner a friend can repeat, at least two things you are NOT building tonight.
 2. **Build.** Only the locked one-liner. Side quests go to the backlog. The clock keeps talking.

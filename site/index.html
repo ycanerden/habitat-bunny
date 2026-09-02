@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claude Code for shipping tonight — one skill, four hops, one URL | habitat-bunny</title>
-<meta name="description" content="Give Claude Code, Codex, Cursor or any agent a clock, a locked scope, and a gate that refuses localhost. Lock, build, ship, roast: one evening. Free, open source, nothing leaves your machine.">
-<meta property="og:title" content="Claude Code for shipping tonight — habitat-bunny">
-<meta property="og:description" content="One skill gives your agent the Habitat night: grill the idea, lock the scope, keep the clock, refuse localhost, roast what shipped. Free, MIT, local.">
+<title>Claude Code for shipping a feature in 2 hours — set a timer, lock one deliverable | habitat-bunny</title>
+<meta name="description" content="Set a timer. Give Claude Code, Codex, Cursor or any agent a clock, one locked deliverable, and a gate that says no to everything else until a stranger can click a URL. Built for brains that focus best under a clock. Free, open source, local.">
+<meta property="og:title" content="Claude Code for shipping a feature in 2 hours — habitat-bunny">
+<meta property="og:description" content="One skill gives your agent a timer, one locked deliverable, and a gate that refuses localhost. Lock, build, ship, roast. Free, MIT, nothing leaves your machine.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#FDFCFB">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101010'/%3E%3Ccircle cx='12' cy='19' r='5' fill='%23fff'/%3E%3Ccircle cx='20' cy='19' r='5' fill='%23fff'/%3E%3Crect x='9' y='5' width='4' height='12' rx='2' fill='%235CAE30'/%3E%3Crect x='19' y='5' width='4' height='12' rx='2' fill='%235CAE30'/%3E%3C/svg%3E">
@@ -48,24 +48,32 @@ h2{font-size:clamp(30px,4.6vw,46px);font-weight:500;letter-spacing:-.025em;line-
 nav{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(253,252,251,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .2s}
 nav.scrolled{border-bottom-color:var(--line)}
 nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:500;font-size:14.5px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:500;font-size:14.5px;white-space:nowrap}
+@media (max-width:600px){.brand .crumb span{display:none}}
 .brand .mark{width:26px;height:26px;border-radius:7px;background:var(--ink);display:grid;place-items:center}
 .brand .crumb{color:var(--muted);font-weight:400}
 .brand .crumb b{color:var(--ink);font-weight:500}
-.navlinks{display:flex;align-items:center;gap:22px;font-size:14px;color:var(--muted)}
+.navlinks{display:flex;align-items:center;gap:22px;font-size:14px;color:var(--muted);white-space:nowrap}
 .navlinks a:hover{color:var(--ink)}
 .navlinks .pill{padding:8px 16px}
-@media (max-width:760px){.navlinks a:not(.pill){display:none}}
+@media (max-width:900px){.navlinks a:not(.pill){display:none}}
 
 /* hero */
 .hero{padding:160px 0 56px;text-align:center}
 .hero .eyebrow{display:inline-flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:#fff}
 .hero .eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--green-bright);display:inline-block}
-h1{font-size:clamp(42px,7vw,78px);font-weight:500;letter-spacing:-.03em;line-height:1.04;max-width:16ch;margin:26px auto 0}
+h1{font-size:clamp(38px,6.5vw,72px);font-weight:500;letter-spacing:-.03em;line-height:1.04;margin:26px auto 0;white-space:nowrap}
+@media (max-width:600px){h1{white-space:normal}}
 .hw{display:inline-block;opacity:0;transform:translateY(.35em);animation:pop .55s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--i)*320ms)}
 @keyframes pop{to{opacity:1;transform:none}}
 .slot{display:inline-grid;grid-auto-flow:column;position:relative;vertical-align:baseline;text-align:left;transition:width .45s cubic-bezier(.2,.7,.2,1)}
 .slot>span{grid-area:1/1;justify-self:start;width:max-content;white-space:nowrap;display:inline-flex;align-items:center;gap:.22em;opacity:0;transform:translateY(.4em);transition:opacity .45s ease,transform .45s cubic-bezier(.2,.7,.2,1)}
+.slot em{font-style:normal}
+@media (max-width:600px){
+  .hw.has-slot{display:block;width:100%}
+  .slot{display:block;position:relative;width:100%!important;transition:height .45s cubic-bezier(.2,.7,.2,1)}
+  .slot>span{position:absolute;left:0;top:0;width:100%;justify-content:center;flex-wrap:wrap;white-space:normal;text-align:center}
+}
 .slot>span.on{opacity:1;transform:none}
 .slot>span.off{opacity:0;transform:translateY(-.4em)}
 .agent-badge{width:.78em;height:.78em;border-radius:.18em;background:var(--dark);color:var(--cyan);font-family:var(--mono);font-size:.5em;display:inline-grid;place-items:center;transform:translateY(-.06em);font-weight:500}
@@ -112,6 +120,14 @@ h1{font-size:clamp(42px,7vw,78px);font-weight:500;letter-spacing:-.03em;line-hei
 .meter{color:var(--green);font-weight:500;font-variant-numeric:tabular-nums;font-size:13px}
 .caption{text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:18px}
 @media (max-width:760px){.film-body{grid-template-columns:1fr}.board{border-left:0;border-top:1px solid var(--line)}.film th:nth-child(2),.film td:nth-child(2){display:none}.film th.c0{width:30px}.film th.c3{width:150px}.film td,.film th{padding-left:10px;padding-right:10px}.film th:first-child,.film td:first-child{padding-left:12px}}
+
+/* focus */
+.focus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:44px;text-align:left}
+@media (max-width:820px){.focus-grid{grid-template-columns:1fr}}
+.fcard{padding:24px 24px 22px}
+.fcard .fn{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.04em}
+.fcard h3{font-size:22px;font-weight:500;letter-spacing:-.02em;margin-top:10px}
+.fcard p{margin:10px 0 0;color:var(--muted);font-size:14.5px}
 
 /* use cases */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
@@ -249,10 +265,11 @@ footer .fb .brand{color:var(--ink)}
       <span class="mark" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 32 32"><circle cx="12" cy="19" r="5" fill="#fff"/><circle cx="20" cy="19" r="5" fill="#fff"/><rect x="9" y="5" width="4" height="12" rx="2" fill="#5CAE30"/><rect x="19" y="5" width="4" height="12" rx="2" fill="#5CAE30"/></svg>
       </span>
-      <span class="crumb"><b>habitat-bunny</b> / Ship tonight</span>
+      <span class="crumb"><b>habitat-bunny</b><span> / Ship on a timer</span></span>
     </a>
     <div class="navlinks">
       <a href="#film">The sprint</a>
+      <a href="#focus">Focus</a>
       <a href="#skills">Skills</a>
       <a href="#container">Habitat</a>
       <a href="https://github.com/ycanerden/habitat-bunny" target="_blank" rel="noopener">Open source</a>
@@ -265,9 +282,9 @@ footer .fb .brand{color:var(--ink)}
 
 <header class="hero wrap">
   <span class="eyebrow"><i></i>open source · MIT · nothing leaves your machine</span>
-  <h1 aria-label="Claude Code for shipping tonight.">
-    <span class="hw" style="--i:0">
-      <span class="slot" id="slot">
+  <h1 aria-label="Claude Code for shipping a feature in 2 hours.">
+    <span class="hw has-slot" style="--i:0">
+      <span class="slot" data-slot>
         <span class="on"><span class="agent-badge">›</span>Claude Code</span>
         <span><span class="agent-badge">›</span>Codex</span>
         <span><span class="agent-badge">›</span>Cursor</span>
@@ -275,14 +292,21 @@ footer .fb .brand{color:var(--ink)}
         <span><span class="agent-badge">›</span>OpenCode</span>
       </span>
     </span>
-    <span class="hw" style="--i:1">for</span><br>
-    <span class="hw" style="--i:2">shipping</span>
-    <span class="hw hl" style="--i:3">tonight.</span>
+    <span class="hw" style="--i:1">for shipping</span><br>
+    <span class="hw has-slot" style="--i:2">
+      <span class="slot" data-slot>
+        <span class="on">a feature <em class="hl">in 2 hours.</em></span>
+        <span>an MVP <em class="hl">in one evening.</em></span>
+        <span>a fix <em class="hl">in 45 minutes.</em></span>
+        <span>a landing page <em class="hl">over lunch.</em></span>
+        <span>a demo <em class="hl">by the deadline.</em></span>
+      </span>
+    </span>
   </h1>
-  <p class="sub">One skill gives your agent the Habitat night: a <b>clock</b>, a <b>locked one-liner</b>, and a gate that refuses localhost. It grills the idea before you build, parks every side quest, and will not say shipped until <b>a stranger can click a URL</b>. Four hops. One evening.</p>
+  <p class="sub">Set the timer: <b>2 hours</b>, an evening, the hackathon deadline. One skill gives your agent a <b>clock</b>, <b>one locked deliverable</b>, and a gate that says no to everything else until <b>a stranger can click a URL</b>. Built for brains that focus best when the clock is running.</p>
   <div class="ctas">
     <a class="pill solid" href="#setup">Set up the bunny</a>
-    <a class="pill ghost" href="#film">Watch a sprint: 4 hops</a>
+    <a class="pill ghost" href="#film">Watch a 2-hour sprint</a>
   </div>
   <div class="works"><span>Claude Code</span><span>Codex</span><span>Cursor</span><span>Gemini CLI</span><span>OpenCode</span><span>any agent that reads a SKILL.md</span></div>
 </header>
@@ -297,17 +321,41 @@ footer .fb .brand{color:var(--ink)}
           <tbody id="rows"></tbody>
         </table>
         <aside class="board">
-          <div class="bt" id="bt">sprint · solo · 4h</div>
-          <div class="brow" id="b-lock"><span class="n">lock</span><span class="t">35m</span><span class="s">waiting</span></div>
-          <div class="brow" id="b-build"><span class="n">build</span><span class="t">2h 35m</span><span class="s">waiting</span></div>
-          <div class="brow" id="b-ship"><span class="n">ship</span><span class="t">35m</span><span class="s">waiting</span></div>
-          <div class="brow" id="b-roast"><span class="n">roast</span><span class="t">15m</span><span class="s">waiting</span></div>
+          <div class="bt" id="bt">sprint · solo · 2h</div>
+          <div class="brow" id="b-lock"><span class="n">lock</span><span class="t">18m</span><span class="s">waiting</span></div>
+          <div class="brow" id="b-build"><span class="n">build</span><span class="t">1h 12m</span><span class="s">waiting</span></div>
+          <div class="brow" id="b-ship"><span class="n">ship</span><span class="t">18m</span><span class="s">waiting</span></div>
+          <div class="brow" id="b-roast"><span class="n">roast</span><span class="t">12m</span><span class="s">waiting</span></div>
           <div class="badge" id="badge">a prompt is a suggestion · a gate is a no</div>
         </aside>
       </div>
-      <div class="film-foot"><span id="status">the clock has not started</span><span class="meter" id="meter">4:00:00</span></div>
+      <div class="film-foot"><span id="status">the timer has not started</span><span class="meter" id="meter">2:00:00</span></div>
     </div>
-    <p class="caption">one evening, replayed live — every hop gated, nothing leaves your machine</p>
+    <p class="caption">two hours, replayed live — every hop gated, nothing leaves your machine</p>
+  </div>
+</section>
+
+<section id="focus" class="center" style="padding-top:0">
+  <div class="wrap">
+    <h2>Focus is a container, not a trait.</h2>
+    <p class="lede">If you do your best work when a clock is running and someone is waiting to see the result (hi, ADHD brains), this is that container, taken from 200+ Habitat nights and put inside your agent. You pick the timer. The bunny does the rest.</p>
+    <div class="focus-grid">
+      <div class="card fcard">
+        <div class="fn">01</div>
+        <h3>One deliverable.</h3>
+        <p>You lock one sentence a friend can repeat. Everything else that comes up mid-build is parked in <span class="mono">backlog.md</span>, not lost. The backlog remembers so you do not have to.</p>
+      </div>
+      <div class="card fcard">
+        <div class="fn">02</div>
+        <h3>A clock that talks.</h3>
+        <p>2 hours, 45 minutes, an evening, a deadline: the bunny splits the window into four hops and speaks up when you drift or go quiet. "Behind pace" is a fact, not a feeling.</p>
+      </div>
+      <div class="card fcard">
+        <div class="fn">03</div>
+        <h3>Done is a URL.</h3>
+        <p>Not "almost", not <span class="mono">localhost</span>. When the timer ends, either a stranger can click it or it did not ship. Then the roast says what was true, and what one move comes next.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -334,7 +382,7 @@ footer .fb .brand{color:var(--ink)}
           <div class="st q" style="--d:300">Is dark mode in the locked one-liner?</div>
           <div class="st row2" style="--d:1400"><span>no</span><span class="tag park">→ .habitat/backlog.md</span></div>
           <div class="st q" style="--d:2500">Parked. <b>Not forgotten. Not tonight.</b></div>
-          <div class="st row2" style="--d:3500"><span class="mono" style="font-size:11px;color:var(--muted)">build hop · 1h 48m left</span><span class="tag">back to the one-liner</span></div>
+          <div class="st row2" style="--d:3500"><span class="mono" style="font-size:11px;color:var(--muted)">build hop · 48m left</span><span class="tag">back to the one-liner</span></div>
         </div>
         <div class="uc-foot">check-scope · parked, not built</div>
       </div>
@@ -376,10 +424,10 @@ footer .fb .brand{color:var(--ink)}
       <div class="card uc" data-uc>
         <div class="strip"><span class="p">›</span><span style="color:var(--term-muted)">(quiet for 20 minutes)</span><span class="cur"></span></div>
         <div class="uc-body">
-          <div class="st row2" style="--d:300"><span class="mono" style="font-size:11px;color:var(--muted)">build hop · 1:12:00 left</span><span class="tag">clock</span></div>
+          <div class="st row2" style="--d:300"><span class="mono" style="font-size:11px;color:var(--muted)">build hop · 0:41:00 left</span><span class="tag">clock</span></div>
           <div class="st q" style="--d:1300">You went quiet. <b>What is the next commit?</b></div>
           <div class="st q" style="--d:2500">Behind pace. Cut one thing from the flow, not from the deploy.</div>
-          <div class="st row2" style="--d:3500"><span>ship hop opens in 1h 12m</span><span class="tag ok">on it</span></div>
+          <div class="st row2" style="--d:3500"><span>ship hop opens in 41m</span><span class="tag ok">on it</span></div>
         </div>
         <div class="uc-foot">pace · the clock talks when you do not</div>
       </div>
@@ -439,7 +487,7 @@ footer .fb .brand{color:var(--ink)}
 <section id="container" class="center" style="padding-top:0">
   <div class="wrap">
     <h2>The container, not the advice.</h2>
-    <p class="lede">AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever. At Habitat nights the magic was never the advice. It was a clock, a locked scope, and a room waiting to see what you made.</p>
+    <p class="lede">AI removed the barrier to building, not to finishing. Agents are infinitely patient and infinitely agreeable, so they help you build forever. At Habitat nights the magic was never the advice. It was a timer, a locked scope, and a room waiting to see what you made.</p>
     <div class="duel" data-reveal>
       <div class="card dcard">
         <div class="dt">agent alone</div>
@@ -449,7 +497,7 @@ footer .fb .brand{color:var(--ink)}
       </div>
       <div class="card dcard">
         <div class="dt">agent + bunny</div>
-        <div class="dh">A URL by the end of the evening.</div>
+        <div class="dh">A URL when the timer ends.</div>
         <div class="track"><div class="seg lock">lock</div><div class="seg build">build</div><div class="seg ship">ship</div><div class="seg roast">roast</div></div>
         <div class="dn">Four hops, one clock. <b>Says no to dark mode.</b> Refuses localhost.</div>
       </div>
@@ -527,11 +575,11 @@ footer .fb .brand{color:var(--ink)}
 
 <section id="setup" class="setup center">
   <div class="wrap">
-    <h2>Give your agent the Habitat night.</h2>
-    <p class="lede">Paste one line into the agent you already build with. It reads the setup notes, installs the skills, runs <span class="mono">/setup-habitat</span>, and hands you back three things to try.</p>
+    <h2>Give your agent a timer.</h2>
+    <p class="lede">Paste one line into the agent you already build with. It reads the setup notes, installs the skills, runs <span class="mono">/setup-habitat</span>, and hands you back three things to try. Then name a timer and one deliverable.</p>
     <div class="cmd">
       <div class="line"><span class="d">$</span><span>set up habitat-bunny — <span class="u">github.com/ycanerden/habitat-bunny/blob/main/llms.txt</span></span><button class="copy" id="copy" data-text="set up habitat-bunny — github.com/ycanerden/habitat-bunny/blob/main/llms.txt">copy</button></div>
-      <div class="note"><b>What happens:</b> the agent picks the skill route for your editor, never installs both, runs <b>/setup-habitat</b> once in your repo, and asks before adding the optional MCP gate. Nothing is sent anywhere. Then say <b>"let's do a ship sprint"</b>.</div>
+      <div class="note"><b>What happens:</b> the agent picks the skill route for your editor, never installs both, runs <b>/setup-habitat</b> once in your repo, and asks before adding the optional MCP gate. Nothing is sent anywhere. Then say <b>"ship sprint, 2 hours, one feature"</b>.</div>
     </div>
 
     <div class="routes">
@@ -597,16 +645,21 @@ claude mcp add habitat-bunny -- npx -y habitat-bunny</pre>
   const onScroll = () => nav.classList.toggle('scrolled', scrollY > 8);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-  // rotating agent slot
-  const slot = $('#slot'); const items = [...slot.children]; let si = 0;
-  const fitSlot = () => { slot.style.width = items[si].getBoundingClientRect().width + 'px'; };
-  document.fonts?.ready.then(fitSlot); fitSlot(); addEventListener('resize', fitSlot);
+  // rotating headline slots (agent, deliverable) tick together
+  const slots = [...document.querySelectorAll('[data-slot]')].map(el => ({ el, items: [...el.children] })); let si = 0;
+  const narrow = matchMedia('(max-width:600px)');
+  const fitSlots = () => slots.forEach(s => {
+    const r = s.items[si].getBoundingClientRect();
+    if (narrow.matches) { s.el.style.width = ''; s.el.style.height = r.height + 'px'; }
+    else { s.el.style.height = ''; s.el.style.width = r.width + 'px'; }
+  });
+  document.fonts?.ready.then(fitSlots); fitSlots(); addEventListener('resize', fitSlots);
   if (!reduce) setInterval(() => {
-    items[si].classList.remove('on'); items[si].classList.add('off');
-    const prev = si; si = (si + 1) % items.length;
-    items[si].classList.remove('off'); items[si].classList.add('on'); fitSlot();
-    setTimeout(() => items[prev].classList.remove('off'), 450);
-  }, 2600);
+    const prev = si; si = (si + 1) % slots[0].items.length;
+    slots.forEach(s => { s.items[prev].classList.remove('on'); s.items[prev].classList.add('off'); s.items[si].classList.remove('off'); s.items[si].classList.add('on'); });
+    fitSlots();
+    setTimeout(() => slots.forEach(s => s.items[prev].classList.remove('off')), 450);
+  }, 3000);
 
   // copy
   const copy = $('#copy');
@@ -692,21 +745,21 @@ claude mcp add habitat-bunny -- npx -y habitat-bunny</pre>
     blankRows(); for (let i = 0; i < script.length; i++) fillRow(i);
     rows.querySelectorAll('tr').forEach(tr => tr.classList.add('in'));
     typed.textContent = 'roast'; say('↩ shipped · 1 parked · 1 refused · ship log written', gen);
-    setBoard(null, ['lock', 'build', 'ship', 'roast']); setClock(41 * 60 + 12);
-    status.textContent = 'one evening · one URL · ships.md updated'; badge.textContent = 'shipped beats perfect';
+    setBoard(null, ['lock', 'build', 'ship', 'roast']); setClock(23 * 60 + 40);
+    status.textContent = 'two hours · one URL · ships.md updated'; badge.textContent = 'shipped beats perfect';
   }
 
   async function play() {
     if (running) return; running = true; const g = ++gen;
-    blankRows(); setBoard(null, []); setClock(4 * 3600); stopClock();
-    status.textContent = 'the clock has not started'; badge.textContent = 'a prompt is a suggestion · a gate is a no'; bt.textContent = 'sprint · solo · 4h';
+    blankRows(); setBoard(null, []); setClock(2 * 3600); stopClock();
+    status.textContent = 'the timer has not started'; badge.textContent = 'a prompt is a suggestion · a gate is a no'; bt.textContent = 'sprint · solo · 2h';
     reply.classList.remove('on'); typed.textContent = '';
 
     // act 1: lock
     if (!await wait(600, g)) return done();
-    await type("let's do a ship sprint", g);
+    await type("ship sprint, 2 hours, one feature", g);
     if (!await wait(500, g)) return done();
-    await say('↩ sprint started · 4h · hop: lock (35m)', g); setBoard('lock', []); runClock(6); status.textContent = 'lock hop · one question at a time · no compliments';
+    await say('↩ timer set · 2h · hop: lock (18m)', g); setBoard('lock', []); runClock(6); status.textContent = 'lock hop · one question at a time · no compliments';
     if (!await wait(1400, g)) return done();
     await type('the ICP is developers', g); if (!await wait(400, g)) return done();
     fillRow(0); await say('↩ gate 2: too vague. where do you find 10 this week?', g);
@@ -716,7 +769,7 @@ claude mcp add habitat-bunny -- npx -y habitat-bunny</pre>
     if (!await wait(1500, g)) return done();
     await type('paste your rejection note, get the fix', g); if (!await wait(400, g)) return done();
     fillRow(2); if (!await wait(600, g)) return done(); fillRow(3);
-    await say('↩ locked · hop: build (2h 35m)', g); setBoard('build', ['lock']); runClock(900); status.textContent = 'build hop · only the locked one-liner · the clock is the boss';
+    await say('↩ locked · hop: build (1h 12m)', g); setBoard('build', ['lock']); runClock(420); status.textContent = 'build hop · only the locked one-liner · the clock is the boss';
     if (!await wait(2000, g)) return done();
 
     // act 2: build, ship, roast
@@ -728,11 +781,11 @@ claude mcp add habitat-bunny -- npx -y habitat-bunny</pre>
     fillRow(5); await say('↩ refused · a stranger cannot click that. deploy it', g);
     if (!await wait(1800, g)) return done();
     await type('ship https://review-fix.vercel.app', g); if (!await wait(400, g)) return done();
-    fillRow(6); await say('↩ live · recorded in ships.md · hop: roast (15m)', g); setBoard('roast', ['lock', 'build', 'ship']); runClock(10); status.textContent = 'roast hop · promise vs artifact';
+    fillRow(6); await say('↩ live · recorded in ships.md · hop: roast (12m)', g); setBoard('roast', ['lock', 'build', 'ship']); runClock(10); status.textContent = 'roast hop · promise vs artifact';
     if (!await wait(1800, g)) return done();
     await type('roast', g); if (!await wait(500, g)) return done();
     fillRow(7); await say('↩ shipped · 1 parked · 1 refused · ship log written', g); setBoard(null, ['lock', 'build', 'ship', 'roast']); stopClock();
-    status.textContent = 'one evening · one URL · ships.md updated'; badge.textContent = 'shipped beats perfect';
+    status.textContent = 'two hours · one URL · ships.md updated'; badge.textContent = 'shipped beats perfect';
     await wait(4200, g);
     done();
     function done() { stopClock(); running = false; if (visible && g === gen && !reduce) play(); }

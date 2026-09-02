@@ -1,6 +1,6 @@
 # habitat-bunny
 
-> The Habitat night, inside the editor you already build with. One skill gives your coding agent a clock, a locked one-liner, and a gate that refuses localhost. Four hops: lock, build, ship, roast. One evening. Free, MIT, local: no backend, no account, no API key, nothing leaves the machine.
+> Set a timer, lock one deliverable, ship it to a URL. One skill gives your coding agent a clock (2 hours, an evening, a hackathon deadline), a locked one-liner, and a gate that refuses localhost. Four hops: lock, build, ship, roast. Free, MIT, local: no backend, no account, no API key, nothing leaves the machine.
 
 This file is written for an agent (Claude Code, Codex, Cursor, Gemini CLI, OpenCode, or anything that reads a SKILL.md). A human pasted a line like `set up habitat-bunny — github.com/ycanerden/habitat-bunny/blob/main/llms.txt` into you. Read this whole file, then act.
 
@@ -51,7 +51,7 @@ Finish the setup, then report it as a doorway, not an install log.
 
 4. **Report the outcome as a doorway.** One short paragraph: which route was installed, whether the burrow exists, whether the gate is connected. Then offer exactly three things to do next, in this shape:
 
-   - "Say **let's do a ship sprint** and I will start the clock. Solo, team, or event."
+   - "Say **ship sprint, 2 hours, one feature** and I will set the timer. Any window works: 45 minutes, an evening, a deadline. Solo, team, or event."
    - "Type **/today** if you are already mid-build and lost. One sentence, then a URL before you stop."
    - "At a hackathon? Say **we're at an event** and paste the brief. The clock becomes the deadline, the roast scores against the judging criteria."
 
